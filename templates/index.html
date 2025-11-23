@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - Análisis de Cohete{% endblock %}
+
+{% block content %}
+<div class="welcome-section">
+    <h2>Bienvenido al Sistema de Análisis de Cohetes</h2>
+    <p>Selecciona una sección del menú para comenzar:</p>
+
+    <div class="cards-container">
+        <div class="card">
+            <h3>📊 Análisis de Trayectoria</h3>
+            <p>Cálculos de trayectoria, órbita y alcance del cohete.</p>
+            <a href="{{ url_for('trayectoria.index') }}" class="btn">Ir a Trayectoria</a>
+        </div>
+
+        <div class="card">
+            <h3>🔧 Análisis Estructural</h3>
+            <p>Resistencia de materiales, cargas y tensiones.</p>
+            <a href="{{ url_for('estructural.index') }}" class="btn">Ir a Estructural</a>
+        </div>
+
+        <div class="card">
+            <h3>⚡ Análisis de Propulsión</h3>
+            <p>Motor, combustible e impulso específico.</p>
+            <a href="{{ url_for('propulsion.index') }}" class="btn">Ir a Propulsión</a>
+        </div>
+
+        <div class="card">
+            <h3>📈 Visualizaciones</h3>
+            <p>Gráficos y diagramas de resultados.</p>
+            <a href="{{ url_for('visualizaciones.index') }}" class="btn">Ir a Visualizaciones</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

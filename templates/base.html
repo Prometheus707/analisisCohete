@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Análisis de Cohete{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <!-- Menú de Navegación -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-title">🚀 Análisis de Cohete</h1>
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('main.index') }}" class="nav-link">Inicio</a></li>
+                <li><a href="{{ url_for('trayectoria.index') }}" class="nav-link">Trayectoria</a></li>
+                <li><a href="{{ url_for('estructural.index') }}" class="nav-link">Estructural</a></li>
+                <li><a href="{{ url_for('propulsion.index') }}" class="nav-link">Propulsión</a></li>
+                <li><a href="{{ url_for('visualizaciones.index') }}" class="nav-link">Visualizaciones</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Contenido de la página -->
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 Análisis de Cohete - Proyecto Universitario</p>
+    </footer>
+</body>
+
+</html>
