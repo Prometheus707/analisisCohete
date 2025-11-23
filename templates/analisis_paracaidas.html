@@ -1,25 +1,106 @@
 {% extends "base.html" %}
-
 {% block title %}Análisis de Paracaídas{% endblock %}
 
 {% block content %}
 <div class="section-content">
     <h2>🪂 Análisis de Paracaídas</h2>
-    <p class="section-description">Análisis de la tasa de cambio de presión durante el descenso para confirmar si el
-        paracaídas se desplegó y a qué altura.</p>
+    <p class="section-description">Análisis de tasa de cambio de presión durante el descenso.</p>
 
-    <div class="content-box">
-        <h3>Sección en desarrollo</h3>
-        <p>Este espacio está listo para que agregues:</p>
-        <ul>
-            <li>Carga de datos de presión vs. tiempo</li>
-            <li>Cálculo de tasa de cambio de presión (derivada)</li>
-            <li>Detección automática de cambio brusco en tasa</li>
-            <li>Determinación de altura de despliegue</li>
-            <li>Gráfico de presión y tasa de cambio</li>
-            <li>Confirmación visual del momento de despliegue</li>
-            <li>Comparación con altura esperada de despliegue</li>
-        </ul>
+    <!-- Selector -->
+    <div class="content-box" style="background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%); color: white;">
+        <h3 style="color: white; margin: 0 0 15px 0;">📋 Seleccionar Lanzamiento</h3>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            {% for id, filename in lanzamientos.items() %}
+            <a href="?lanzamiento={{ id }}" style="padding: 10px 20px; 
+                      background: {{ 'rgba(255,255,255,0.9)' if id == lanzamiento_actual else 'rgba(255,255,255,0.2)' }}; 
+                      color: {{ '#FF6B6B' if id == lanzamiento_actual else 'white' }};
+                      border-radius: 8px; text-decoration: none; font-weight: bold;">
+                Lanzamiento {{ id }}
+            </a>
+            {% endfor %}
+        </div>
     </div>
+
+    {% if error %}
+    <div class="content-box" style="background-color: #ffebee; border-left: 4px solid #c62828;">
+        <h3 style="color: #c62828;">⚠️ Error</h3>
+        <p>{{ error }}</p>
+    </div>
+    {% else %}
+
+    <!-- Gráfico -->
+    <div class="content-box">
+        <h3>📊 Gráficas de Presión</h3>
+        <p>Presión atmosférica y tasa de cambio para detectar apertura del paracaídas.</p>
+        <div id="grafico-container">{{ grafico|safe }}</div>
+    </div>
+
+    <!-- Estadísticas -->
+    {% if estadisticas %}
+    <div class="content-box" style="background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%); color: white;">
+        <h3 style="color: white;">📈 Resultados</h3>
+        <div
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-top: 15px;">
+            <div style="background: rgba(255,255,255,0.15); padding: 12px; border-radius: 8px;">
+                <div style="font-size: 13px; opacity: 0.9;">Paracaídas Detectado</div>
+                <div style="font-size: 24px; font-weight: bold; margin-top: 5px;">
+                    {{ estadisticas.despliegue_confirmado }}
+                    {{ '✅' if estadisticas.despliegue_confirmado == 'Sí' else '❌' }}
+                </div>
+            </div>
+            <div style="background: rgba(255,255,255,0.15); padding: 12px; border-radius: 8px;">
+                <div style="font-size: 13px; opacity: 0.9;">Tiempo de Apertura</div>
+                <div style="font-size: 24px; font-weight: bold; margin-top: 5px;">{{ estadisticas.despliegue_tiempo }} s
+                </div>
+            </div>
+            <div style="background: rgba(255,255,255,0.15); padding: 12px; border-radius: 8px;">
+                <div style="font-size: 13px; opacity: 0.9;">Altitud de Apertura</div>
+                <div style="font-size: 24px; font-weight: bold; margin-top: 5px;">{{ estadisticas.despliegue_altitud }}
+                    m</div>
+            </div>
+            <div style="background: rgba(255,255,255,0.15); padding: 12px; border-radius: 8px;">
+                <div style="font-size: 13px; opacity: 0.9;">Apogeo</div>
+                <div style="font-size: 24px; font-weight: bold; margin-top: 5px;">{{ estadisticas.apogeo_altitud }} m
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Explicación -->
+    <div class="content-box">
+        <h3>📝 Cómo Funciona</h3>
+        <div style="display: grid; gap: 12px;">
+            <div style="border-left: 4px solid #2196F3; padding-left: 12px;">
+                <h4 style="color: #2196F3; margin: 0;">📊 Presión Atmosférica</h4>
+                <p style="margin: 5px 0 0 0;">Muestra cómo cambia la presión durante el vuelo. Baja al subir, sube al
+                    bajar.</p>
+            </div>
+            <div style="border-left: 4px solid #FF9800; padding-left: 12px;">
+                <h4 style="color: #FF9800; margin: 0;">📈 Tasa de Cambio</h4>
+                <p style="margin: 5px 0 0 0;">Derivada de la presión (Pa/s). Muestra qué tan rápido cambia durante el
+                    descenso.</p>
+            </div>
+            <div style="border-left: 4px solid #F44336; padding-left: 12px;">
+                <h4 style="color: #F44336; margin: 0;">🪂 Apertura Pasiva</h4>
+                <p style="margin: 5px 0 0 0;">El paracaídas está en la punta del cohete y se abre naturalmente al inicio
+                    del descenso por la fuerza del aire.</p>
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
 </div>
+
+<style>
+    #grafico-container {
+        margin-top: 15px;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .content-box h3 {
+        margin-top: 0;
+    }
+</style>
 {% endblock %}

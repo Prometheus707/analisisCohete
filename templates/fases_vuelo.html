@@ -1,24 +1,107 @@
 {% extends "base.html" %}
-
 {% block title %}Fases del Vuelo{% endblock %}
 
 {% block content %}
 <div class="section-content">
     <h2>🚀 Fases del Vuelo</h2>
-    <p class="section-description">Identificación y graficación de las fases del vuelo (ascenso, apogeo, descenso)
-        usando datos de altitud del cohete.</p>
+    <p class="section-description">Análisis de fases del vuelo con datos de altitud del cohete.</p>
 
-    <div class="content-box">
-        <h3>Sección en desarrollo</h3>
-        <p>Este espacio está listo para que agregues:</p>
-        <ul>
-            <li>Carga de datos de altitud vs. tiempo del sensor</li>
-            <li>Algoritmo de identificación automática de fases</li>
-            <li>Gráfico de altitud con marcadores de cada fase</li>
-            <li>Tabla con tiempos y altitudes de cada fase</li>
-            <li>Análisis de duración de cada fase</li>
-            <li>Comparación con valores esperados teóricos</li>
-        </ul>
+    <!-- Selector de Lanzamiento -->
+    <div class="content-box" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <h3 style="color: white; margin: 0 0 15px 0;">📋 Seleccionar Lanzamiento</h3>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            {% for id, filename in lanzamientos.items() %}
+            <a href="?lanzamiento={{ id }}" style="padding: 10px 20px; 
+                      background: {{ 'rgba(255,255,255,0.9)' if id == lanzamiento_actual else 'rgba(255,255,255,0.2)' }}; 
+                      color: {{ '#667eea' if id == lanzamiento_actual else 'white' }};
+                      border-radius: 8px; text-decoration: none; font-weight: bold; transition: all 0.3s;">
+                Lanzamiento {{ id }}
+            </a>
+            {% endfor %}
+        </div>
     </div>
+
+    {% if error %}
+    <div class="content-box" style="background-color: #ffebee; border-left: 4px solid #c62828;">
+        <h3 style="color: #c62828;">⚠️ Error</h3>
+        <p>{{ error }}</p>
+    </div>
+    {% else %}
+
+    <!-- Gráfico Interactivo -->
+    <div class="content-box">
+        <h3>📊 Gráfico de Fases del Vuelo</h3>
+        <p>Gráfico interactivo: zoom, hover para ver detalles.</p>
+        <div id="grafico-container">{{ grafico|safe }}</div>
+    </div>
+
+    <!-- Estadísticas -->
+    {% if estadisticas %}
+    <div class="content-box" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <h3 style="color: white;">📈 Estadísticas del Vuelo</h3>
+        <div
+            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-top: 15px;">
+            <div
+                style="background: rgba(255,255,255,0.15); padding: 12px; border-radius: 8px; backdrop-filter: blur(10px);">
+                <div style="font-size: 13px; opacity: 0.9;">Altitud Máxima</div>
+                <div style="font-size: 24px; font-weight: bold; margin-top: 5px;">{{ estadisticas.altitud_maxima }} m
+                </div>
+            </div>
+            <div style="background: rgba(255,255,255,0.15); padding: 12px; border-radius: 8px;">
+                <div style="font-size: 13px; opacity: 0.9;">Tiempo Apogeo</div>
+                <div style="font-size: 24px; font-weight: bold; margin-top: 5px;">{{ estadisticas.tiempo_apogeo }} s
+                </div>
+            </div>
+            <div style="background: rgba(255,255,255,0.15); padding: 12px; border-radius: 8px;">
+                <div style="font-size: 13px; opacity: 0.9;">Duración Ascenso</div>
+                <div style="font-size: 24px; font-weight: bold; margin-top: 5px;">{{ estadisticas.duracion_ascenso }} s
+                </div>
+            </div>
+            <div style="background: rgba(255,255,255,0.15); padding: 12px; border-radius: 8px;">
+                <div style="font-size: 13px; opacity: 0.9;">Duración Descenso</div>
+                <div style="font-size: 24px; font-weight: bold; margin-top: 5px;">{{ estadisticas.duracion_descenso }} s
+                </div>
+            </div>
+            <div style="background: rgba(255,255,255,0.15); padding: 12px; border-radius: 8px;">
+                <div style="font-size: 13px; opacity: 0.9;">Duración Total</div>
+                <div style="font-size: 24px; font-weight: bold; margin-top: 5px;">{{ estadisticas.duracion_total }} s
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Descripción -->
+    <div class="content-box">
+        <h3>📝 Descripción de Fases</h3>
+        <div style="display: grid; gap: 12px;">
+            <div style="border-left: 4px solid #1E88E5; padding-left: 12px;">
+                <h4 style="color: #1E88E5; margin: 0;">🔵 Ascenso</h4>
+                <p style="margin: 5px 0 0 0;">Desde despegue hasta apogeo. El cohete gana altitud por impulso del motor.
+                </p>
+            </div>
+            <div style="border-left: 4px solid #FFA726; padding-left: 12px;">
+                <h4 style="color: #FFA726; margin: 0;">🟠 Descenso</h4>
+                <p style="margin: 5px 0 0 0;">Desde apogeo hasta aterrizaje. Descenso con paracaídas.</p>
+            </div>
+            <div style="border-left: 4px solid #F44336; padding-left: 12px;">
+                <h4 style="color: #F44336; margin: 0;">⭐ Apogeo</h4>
+                <p style="margin: 5px 0 0 0;">Punto de máxima altitud. Velocidad vertical = 0.</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
+
+<style>
+    #grafico-container {
+        margin-top: 15px;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .content-box h3 {
+        margin-top: 0;
+    }
+</style>
 {% endblock %}
