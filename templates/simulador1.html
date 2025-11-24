@@ -1,0 +1,1004 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Avanzado de Cohetes</title>
+    <style>
+        /* ================= VARIABLES Y ESTILOS GENERALES ================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+        }
+
+        /* ================= PANEL DE CONTROL ================= */
+        .control-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .control-section {
+            margin-bottom: 25px;
+        }
+
+        .control-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pressure-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .pressure-slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(to right, #4caf50 0%, #ffeb3b 50%, #f44336 100%);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .pressure-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #333;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        .pressure-slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #333;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            border: none;
+        }
+
+        .pressure-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pressure-input {
+            flex: 1;
+            padding: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            border: 3px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .pressure-bar {
+            height: 50px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #ddd;
+        }
+
+        .pressure-bar-fill {
+            height: 100%;
+            background: linear-gradient(to right, #4caf50, #ffeb3b, #f44336);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .info-display {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 8px;
+            background: white;
+            border-radius: 5px;
+        }
+
+        .info-label {
+            color: #666;
+            font-weight: 600;
+        }
+
+        .info-value {
+            color: #2196f3;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .status-ready { background: #4caf50; color: white; }
+        .status-removing { background: #ff9800; color: white; }
+        .status-launching { background: #f44336; color: white; }
+        .status-descending { background: #2196f3; color: white; }
+        .status-landed { background: #9c27b0; color: white; }
+
+        .launch-button {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.4);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .launch-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(244, 67, 54, 0.6);
+        }
+
+        .launch-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .warning-text {
+            color: #f44336;
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        /* ================= ESCENARIO DE SIMULACIÓN ================= */
+        .simulation-area {
+            background: linear-gradient(to bottom, 
+                #0a1929 0%, 
+                #1e3a5f 30%, 
+                #4a90e2 60%, 
+                #87ceeb 100%
+            );
+            border-radius: 15px;
+            position: relative;
+            height: 750px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 3px solid white;
+        }
+
+        /* Nubes animadas */
+        .clouds-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .cloud {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 100px;
+            filter: blur(8px);
+        }
+
+        .cloud1 { width: 120px; height: 50px; top: 80px; animation: float-cloud 25s linear infinite; }
+        .cloud2 { width: 160px; height: 60px; top: 180px; animation: float-cloud 35s linear infinite 5s; }
+        .cloud3 { width: 100px; height: 40px; top: 300px; animation: float-cloud 20s linear infinite 10s; }
+
+        @keyframes float-cloud {
+            from { transform: translateX(-200px); }
+            to { transform: translateX(calc(100vw + 200px)); }
+        }
+
+        /* Indicador de altura digital */
+        .height-display {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.85);
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            border: 3px solid #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            z-index: 100;
+        }
+
+        /* Paracaídas */
+        .parachute {
+            position: absolute;
+            width: 140px;
+            height: 110px;
+            left: 50%;
+            transform: translateX(-50%) scale(0);
+            transition: transform 0.4s ease-out;
+            z-index: 50;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+        }
+
+        .parachute.open {
+            transform: translateX(-50%) scale(1);
+        }
+
+        /* Cohete */
+        .rocket-container {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 160px;
+            z-index: 40;
+            transition: bottom 0.05s linear;
+        }
+
+        /* Llamas del cohete */
+        .flame {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 40px;
+            display: none;
+        }
+
+        .flame.active {
+            display: block;
+            animation: flicker 0.1s infinite;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; transform: translateX(-50%) scaleY(1); }
+            50% { opacity: 0.8; transform: translateX(-50%) scaleY(1.1); }
+        }
+
+        /* Seguros laterales */
+        .safety-pin {
+            position: absolute;
+            height: 3px;
+            background: #8d6e63;
+            z-index: 60;
+            transition: all 0.6s ease-out;
+        }
+
+        .safety-pin-left {
+            bottom: 135px;
+            right: 50%;
+            width: 180px;
+            transform-origin: right center;
+        }
+
+        .safety-pin-right {
+            bottom: 135px;
+            left: 50%;
+            width: 180px;
+            transform-origin: left center;
+        }
+
+        .safety-pin::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 8px;
+            background: linear-gradient(135deg, #bdbdbd, #757575);
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .safety-pin-left::before { right: -5px; top: -3px; }
+        .safety-pin-right::before { left: -5px; top: -3px; }
+
+        .safety-pin.removed-left {
+            transform: translateX(-350px) rotate(-25deg);
+            opacity: 0;
+        }
+
+        .safety-pin.removed-right {
+            transform: translateX(350px) rotate(25deg);
+            opacity: 0;
+        }
+
+        /* Plataforma de lanzamiento */
+        .launch-platform {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 180px;
+            height: 25px;
+            background: linear-gradient(to bottom, #9e9e9e, #616161);
+            border-radius: 8px;
+            border: 3px solid #424242;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.4);
+            z-index: 30;
+        }
+
+        .platform-legs::before,
+        .platform-legs::after {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 30px;
+            background: #424242;
+            bottom: -30px;
+            border-radius: 4px;
+        }
+
+        .platform-legs::before { left: 20px; }
+        .platform-legs::after { right: 20px; }
+
+        /* Sistema de bomba */
+        .pump-system {
+            position: absolute;
+            bottom: 80px;
+            left: 60px;
+            z-index: 35;
+        }
+
+        /* Manómetro mejorado */
+        .gauge-container {
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 50%;
+            border: 5px solid #212121;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            margin-bottom: 15px;
+        }
+
+        .gauge-face {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .gauge-marks {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .gauge-mark {
+            position: absolute;
+            width: 2px;
+            height: 8px;
+            background: #333;
+            top: 5px;
+            left: 50%;
+            transform-origin: 50% 45px;
+        }
+
+        .gauge-number {
+            position: absolute;
+            font-size: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .gauge-needle {
+            position: absolute;
+            width: 3px;
+            height: 35px;
+            background: #f44336;
+            top: 50%;
+            left: 50%;
+            transform-origin: bottom center;
+            transform: translate(-50%, -100%) rotate(-135deg);
+            transition: transform 0.5s cubic-bezier(0.4, 2.3, 0.6, 1);
+            border-radius: 2px 2px 0 0;
+            box-shadow: 0 0 5px rgba(244, 67, 54, 0.5);
+        }
+
+        .gauge-center {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #212121;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .gauge-label {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Bomba de aire */
+        .pump-body {
+            width: 45px;
+            height: 120px;
+            background: linear-gradient(to right, #d32f2f, #f44336);
+            border-radius: 8px;
+            border: 3px solid #b71c1c;
+            position: relative;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+            margin-left: 28px;
+        }
+
+        .pump-base {
+            position: absolute;
+            bottom: -10px;
+            left: -8px;
+            width: 60px;
+            height: 15px;
+            background: #424242;
+            border-radius: 5px;
+        }
+
+        .pump-details {
+            position: absolute;
+            width: 35px;
+            height: 2px;
+            background: #b71c1c;
+            left: 5px;
+        }
+
+        /* Manguera conectora */
+        .connecting-hose {
+            position: absolute;
+            top: 40px;
+            left: 45px;
+            width: 150px;
+            height: 60px;
+            pointer-events: none;
+        }
+
+        /* Suelo */
+        .ground {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: linear-gradient(to bottom, 
+                #4caf50 0%, 
+                #388e3c 30%, 
+                #3e2723 30%
+            );
+            z-index: 20;
+        }
+
+        .grass-detail {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: repeating-linear-gradient(
+                90deg,
+                #66bb6a 0px,
+                #66bb6a 3px,
+                transparent 3px,
+                transparent 6px
+            );
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .control-panel {
+                max-width: 500px;
+                margin: 0 auto 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🚀 Simulador Avanzado de Cohetes de Agua</h1>
+            <p>Sistema de Lanzamiento con Física Realista</p>
+        </div>
+
+        <div class="content-grid">
+            <!-- Panel de Control -->
+            <div class="control-panel">
+                <div class="control-section">
+                    <h3>
+                        <span style="font-size: 1.5rem;">⚙️</span>
+                        Control de Presión
+                    </h3>
+                    <div class="pressure-controls">
+                        <input 
+                            type="range" 
+                            id="psiSlider" 
+                            class="pressure-slider" 
+                            min="0" 
+                            max="80" 
+                            value="0"
+                            step="1"
+                        >
+                        <div class="pressure-input-group">
+                            <input 
+                                type="number" 
+                                id="psiInput" 
+                                class="pressure-input" 
+                                value="0" 
+                                min="0" 
+                                max="80"
+                            >
+                            <span style="font-weight: bold; font-size: 1.2rem;">PSI</span>
+                        </div>
+                        <div class="pressure-bar">
+                            <div class="pressure-bar-fill" id="pressureBar" style="width: 0%">
+                                0 PSI
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>
+                        <span style="font-size: 1.5rem;">📊</span>
+                        Datos de Vuelo
+                    </h3>
+                    <div class="info-display">
+                        <div class="info-row">
+                            <span class="info-label">Altura Actual:</span>
+                            <span class="info-value" id="currentHeight">0.0 m</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Altura Máxima:</span>
+                            <span class="info-value" id="maxHeight">0.0 m</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Altura Predicha:</span>
+                            <span class="info-value" id="predictedHeight">-- m</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Estado:</span>
+                            <span class="status-badge status-ready" id="statusBadge">⚡ LISTO</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <button id="launchButton" class="launch-button">
+                        ⚠️ QUITAR SEGUROS Y LANZAR
+                    </button>
+                    <p class="warning-text" id="warningText" style="display: none;">
+                        ⚠️ Ajusta la presión antes de lanzar
+                    </p>
+                </div>
+            </div>
+
+            <!-- Área de Simulación -->
+            <div class="simulation-area">
+                <!-- Nubes -->
+                <div class="clouds-container">
+                    <div class="cloud cloud1"></div>
+                    <div class="cloud cloud2"></div>
+                    <div class="cloud cloud3"></div>
+                </div>
+
+                <!-- Indicador de Altura -->
+                <div class="height-display">
+                    ALTURA: <span id="liveHeight">0.0</span> m
+                </div>
+
+                <!-- Paracaídas -->
+                <div class="parachute" id="parachute">
+                    <svg viewBox="0 0 140 110" width="140" height="110">
+                        <ellipse cx="70" cy="40" rx="65" ry="40" fill="#ff1744" stroke="#c51162" stroke-width="3"/>
+                        <ellipse cx="70" cy="40" rx="58" ry="35" fill="#ff5252" opacity="0.6"/>
+                        <path d="M 15,60 Q 70,15 125,60" fill="none" stroke="#c51162" stroke-width="2"/>
+                        <path d="M 35,65 Q 70,25 105,65" fill="none" stroke="#c51162" stroke-width="1.5"/>
+                        <line x1="15" y1="70" x2="65" y2="105" stroke="#333" stroke-width="2"/>
+                        <line x1="125" y1="70" x2="75" y2="105" stroke="#333" stroke-width="2"/>
+                        <line x1="45" y1="72" x2="65" y2="105" stroke="#333" stroke-width="1.5"/>
+                        <line x1="95" y1="72" x2="75" y2="105" stroke="#333" stroke-width="1.5"/>
+                        <line x1="70" y1="65" x2="70" y2="105" stroke="#333" stroke-width="2"/>
+                    </svg>
+                </div>
+
+                <!-- Cohete -->
+                <div class="rocket-container" id="rocket">
+                    <!-- Llamas -->
+                    <div class="flame" id="flame">
+                        <svg viewBox="0 0 30 40" width="30" height="40">
+                            <ellipse cx="15" cy="20" rx="12" ry="20" fill="#ff6f00" opacity="0.9"/>
+                            <ellipse cx="15" cy="18" rx="8" ry="15" fill="#ffd600" opacity="0.8"/>
+                            <ellipse cx="15" cy="15" rx="5" ry="10" fill="#ffff00" opacity="0.9"/>
+                        </svg>
+                    </div>
+
+                    <!-- Cuerpo del cohete -->
+                    <svg viewBox="0 0 70 160" width="70" height="160">
+                        <!-- Aletas -->
+                        <polygon points="12,125 0,155 25,135" fill="#d32f2f" stroke="#b71c1c" stroke-width="2"/>
+                        <polygon points="58,125 70,155 45,135" fill="#d32f2f" stroke="#b71c1c" stroke-width="2"/>
+                        
+                        <!-- Cuerpo principal -->
+                        <rect x="20" y="35" width="30" height="105" fill="#f5f5f5" stroke="#757575" stroke-width="2" rx="3"/>
+                        
+                        <!-- Franjas decorativas -->
+                        <rect x="20" y="60" width="30" height="4" fill="#2196f3"/>
+                        <rect x="20" y="85" width="30" height="4" fill="#f44336"/>
+                        <rect x="20" y="110" width="30" height="4" fill="#2196f3"/>
+                        
+                        <!-- Ventana -->
+                        <circle cx="35" cy="70" r="10" fill="#1565c0" stroke="#0d47a1" stroke-width="2"/>
+                        <circle cx="35" cy="70" r="7" fill="#42a5f5" opacity="0.6"/>
+                        <circle cx="33" cy="68" r="3" fill="#90caf9" opacity="0.8"/>
+                        
+                        <!-- Cono superior -->
+                        <path d="M 20,35 Q 35,8 50,35" fill="#d32f2f" stroke="#b71c1c" stroke-width="2"/>
+                        <path d="M 25,35 Q 35,15 45,35" fill="#f44336" opacity="0.7"/>
+                    </svg>
+                </div>
+
+                <!-- Seguros -->
+                <div class="safety-pin safety-pin-left" id="pinLeft"></div>
+                <div class="safety-pin safety-pin-right" id="pinRight"></div>
+
+                <!-- Plataforma -->
+                <div class="launch-platform">
+                    <div class="platform-legs"></div>
+                </div>
+
+                <!-- Sistema de Bomba -->
+                <div class="pump-system">
+                    <!-- Manómetro -->
+                    <div class="gauge-container">
+                        <div class="gauge-face">
+                            <!-- Marcas del manómetro -->
+                            <div class="gauge-marks">
+                                <div class="gauge-mark" style="transform: rotate(-135deg) translateX(-50%);"></div>
+                                <div class="gauge-mark" style="transform: rotate(-67.5deg) translateX(-50%);"></div>
+                                <div class="gauge-mark" style="transform: rotate(0deg) translateX(-50%);"></div>
+                                <div class="gauge-mark" style="transform: rotate(67.5deg) translateX(-50%);"></div>
+                                <div class="gauge-mark" style="transform: rotate(135deg) translateX(-50%);"></div>
+                            </div>
+                            
+                            <!-- Números -->
+                            <div class="gauge-number" style="top: 8px; left: 8px;">0</div>
+                            <div class="gauge-number" style="top: 8px; right: 8px;">80</div>
+                            <div class="gauge-number" style="bottom: 30px; left: 50%; transform: translateX(-50%);">40</div>
+                            
+                            <!-- Aguja -->
+                            <div class="gauge-needle" id="gaugeNeedle"></div>
+                            
+                            <!-- Centro -->
+                            <div class="gauge-center"></div>
+                            
+                            <!-- Etiqueta -->
+                            <div class="gauge-label">PSI</div>
+                        </div>
+                    </div>
+
+                    <!-- Cuerpo de la bomba -->
+                    <div class="pump-body">
+                        <div class="pump-details" style="top: 20px;"></div>
+                        <div class="pump-details" style="top: 40px;"></div>
+                        <div class="pump-details" style="top: 60px;"></div>
+                        <div class="pump-base"></div>
+                    </div>
+
+                    <!-- Manguera -->
+                    <svg class="connecting-hose">
+                        <path d="M 0,30 Q 75,50 150,25" stroke="#212121" stroke-width="5" fill="none" stroke-linecap="round"/>
+                    </svg>
+                </div>
+
+                <!-- Suelo -->
+                <div class="ground">
+                    <div class="grass-detail"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== CONFIGURACIÓN ====================
+        const A_COEF = {{ A_coef }};
+        const PSI_MAX = {{ psi_max }};
+        const H_MEAN = {{ h_mean }};
+
+        // ==================== REFERENCIAS DOM ====================
+        const psiSlider = document.getElementById('psiSlider');
+        const psiInput = document.getElementById('psiInput');
+        const pressureBar = document.getElementById('pressureBar');
+        const gaugeNeedle = document.getElementById('gaugeNeedle');
+        const launchButton = document.getElementById('launchButton');
+        const warningText = document.getElementById('warningText');
+        const statusBadge = document.getElementById('statusBadge');
+        const currentHeight = document.getElementById('currentHeight');
+        const maxHeight = document.getElementById('maxHeight');
+        const predictedHeight = document.getElementById('predictedHeight');
+        const liveHeight = document.getElementById('liveHeight');
+        const rocket = document.getElementById('rocket');
+        const parachute = document.getElementById('parachute');
+        const flame = document.getElementById('flame');
+        const pinLeft = document.getElementById('pinLeft');
+        const pinRight = document.getElementById('pinRight');
+
+        // ==================== ESTADO ====================
+        let currentPsi = 0;
+        let isFlying = false;
+        let animationFrame = null;
+
+        // ==================== FUNCIONES DE PRESIÓN ====================
+        function updatePressure(value) {
+            currentPsi = Math.max(0, Math.min(80, parseFloat(value) || 0));
+            
+            // Actualizar inputs
+            psiSlider.value = currentPsi;
+            psiInput.value = currentPsi;
+            
+            // Actualizar barra
+            const percentage = (currentPsi / 80) * 100;
+            pressureBar.style.width = percentage + '%';
+            pressureBar.textContent = currentPsi + ' PSI';
+            
+            // Actualizar manómetro (-135° = 0 PSI, 135° = 80 PSI)
+            const angle = -135 + (currentPsi / 80) * 270;
+            // ... (continuación de tu función updatePressure)
+            
+            gaugeNeedle.style.transform = `translate(-50%, -100%) rotate(${angle}deg)`;
+
+            // Actualizar predicción de texto en tiempo real
+            const predicted = (currentPsi * A_COEF).toFixed(2);
+            predictedHeight.textContent = `${predicted} m`;
+            
+            if (currentPsi > 0) {
+                warningText.style.display = 'none';
+            }
+        }
+
+        // ==================== LÓGICA DE LANZAMIENTO ====================
+        
+        launchButton.addEventListener('click', async () => {
+            if (currentPsi <= 0) {
+                warningText.style.display = 'block';
+                return;
+            }
+            if (isFlying) return;
+
+            // 1. Preparar lanzamiento
+            isFlying = true;
+            launchButton.disabled = true;
+            statusBadge.className = 'status-badge status-removing';
+            statusBadge.textContent = '🔓 QUITANDO SEGUROS';
+
+            // Obtener datos precisos del backend (o usar cálculo local si falla)
+            let targetHeight = currentPsi * A_COEF;
+            try {
+                const response = await fetch('/simulador/calcular', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ psi: currentPsi })
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    targetHeight = data.height_m;
+                }
+            } catch (error) {
+                console.log("Usando cálculo local offline");
+            }
+
+            maxHeight.textContent = targetHeight.toFixed(2) + " m";
+
+            // 2. Animación de retirar seguros (Clavos)
+            pinLeft.classList.add('removed-left');
+            pinRight.classList.add('removed-right');
+
+            // Esperar 800ms a que los seguros salgan volando antes de despegar
+            setTimeout(() => {
+                startAscent(targetHeight);
+            }, 800);
+        });
+
+        function startAscent(targetHeight) {
+            statusBadge.className = 'status-badge status-launching';
+            statusBadge.textContent = '🚀 ASCENSO';
+            flame.classList.add('active'); // Encender motor
+
+            // Configuración física de la animación
+            const pxPerMeter = 20; // Escala: 1 metro = 20px
+            const maxPx = targetHeight * pxPerMeter;
+            
+            // Limitamos visualmente para que no se salga de la pantalla (máx 600px visuales)
+            // pero mostramos el número real en el texto
+            const visualLimit = 600;
+            const visualHeight = Math.min(maxPx, visualLimit);
+            
+            const duration = 2000; // ms de subida
+            const startTime = performance.now();
+            const startBottom = 80; // Altura de la base
+
+            function animate(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                // Easing cuadrático para simular gravedad (rápido al inicio, lento al final)
+                // f(t) = t * (2 - t)
+                const easeOut = progress * (2 - progress);
+
+                const currentVisualH = visualHeight * easeOut;
+                const currentRealH = targetHeight * easeOut;
+
+                // Mover cohete
+                rocket.style.bottom = (startBottom + currentVisualH) + 'px';
+                
+                // Actualizar texto digital
+                liveHeight.textContent = currentRealH.toFixed(1);
+                currentHeight.textContent = currentRealH.toFixed(1) + " m";
+
+                if (progress < 1) {
+                    animationFrame = requestAnimationFrame(animate);
+                } else {
+                    // Fin del ascenso -> Apogeo
+                    flame.classList.remove('active');
+                    openParachuteAndDescend(startBottom, visualHeight);
+                }
+            }
+
+            animationFrame = requestAnimationFrame(animate);
+        }
+
+        function openParachuteAndDescend(groundLevel, peakPixelHeight) {
+            statusBadge.className = 'status-badge status-descending';
+            statusBadge.textContent = '🪂 DESCENSO';
+            
+            // Abrir paracaídas
+            parachute.classList.add('open');
+            // Posicionar paracaídas sobre el cohete (ajuste visual)
+            parachute.style.bottom = (peakPixelHeight + 160) + 'px'; 
+
+            // Simular caída lenta
+            const descentSpeed = 150; // pixels por segundo
+            const descentDuration = (peakPixelHeight / descentSpeed) * 1000;
+            
+            rocket.style.transition = `bottom ${descentDuration}ms linear`;
+            rocket.style.bottom = groundLevel + 'px';
+            
+            // El paracaídas baja junto con el cohete pero necesitamos animarlo por separado 
+            // o meterlo dentro del contenedor del cohete. Como están separados en HTML:
+            parachute.style.transition = `bottom ${descentDuration}ms linear`;
+            parachute.style.bottom = (groundLevel + 160) + 'px'; // +160 offset por altura cohete
+
+            // Contador de bajada
+            const startDescend = performance.now();
+            const startHVal = parseFloat(liveHeight.textContent);
+
+            function descendCounter(time) {
+                const elapsed = time - startDescend;
+                const progress = Math.min(elapsed / descentDuration, 1);
+                
+                const currentH = startHVal * (1 - progress);
+                liveHeight.textContent = currentH.toFixed(1);
+                currentHeight.textContent = currentH.toFixed(1) + " m";
+
+                if (progress < 1) {
+                    requestAnimationFrame(descendCounter);
+                } else {
+                    resetSystem();
+                }
+            }
+            requestAnimationFrame(descendCounter);
+        }
+
+        function resetSystem() {
+            statusBadge.className = 'status-badge status-landed';
+            statusBadge.textContent = '🏁 ATERRIZAJE';
+            
+            setTimeout(() => {
+                // Resetear visuales
+                isFlying = false;
+                launchButton.disabled = false;
+                rocket.style.transition = 'none';
+                parachute.style.transition = 'none';
+                parachute.classList.remove('open');
+                
+                // Resetear seguros
+                pinLeft.classList.remove('removed-left');
+                pinRight.classList.remove('removed-right');
+                
+                statusBadge.className = 'status-badge status-ready';
+                statusBadge.textContent = '⚡ LISTO';
+                
+                // Resetear paracaídas a su posición original relativa si es necesario
+                // (CSS lo maneja al quitar la clase y style)
+                parachute.style.bottom = ''; 
+                parachute.style.top = ''; // Limpiar estilos inline
+                
+            }, 1000);
+        }
+
+        // ==================== INICIALIZACIÓN ====================
+        // Listeners iniciales
+        psiSlider.addEventListener('input', (e) => updatePressure(e.target.value));
+        psiInput.addEventListener('input', (e) => updatePressure(e.target.value));
+
+        // Inicializar vista
+        updatePressure(0);
+
+    </script>
+</body>
+</html>
+{% endblock %}
