@@ -1,25 +1,56 @@
 {% extends "base.html" %}
 
-{% block title %}Detección de Anomalías{% endblock %}
-
 {% block content %}
-<div class="section-content">
-    <h2>⚠️ Detección de Anomalías</h2>
-    <p class="section-description">Investigación de picos o caídas inesperadas en datos de temperatura/presión, con
-        propuesta de causas probables (vibración, sombra, error manual, etc.).</p>
 
-    <div class="content-box">
-        <h3>Sección en desarrollo</h3>
-        <p>Este espacio está listo para que agregues:</p>
-        <ul>
-            <li>Carga de datos de temperatura y presión</li>
-            <li>Algoritmos de detección de anomalías estadísticas</li>
-            <li>Identificación de picos y caídas inesperadas</li>
-            <li>Análisis temporal de anomalías</li>
-            <li>Sistema experto para proponer causas probables</li>
-            <li>Gráficos con marcadores de anomalías</li>
-            <li>Reporte detallado con recomendaciones</li>
-        </ul>
-    </div>
+<div class="container mt-4">
+    <h2 class="mb-4">🔍 Detección de Anomalías en los Vuelos</h2>
+
+    {% for resultado in resultados %}
+        <div class="card mb-4 shadow">
+            <div class="card-header bg-primary text-white">
+                <strong>Archivo: {{ resultado.archivo }}</strong>
+            </div>
+            <div class="card-body">
+
+                <!-- PRESIÓN -->
+                <h5 class="text-info">Anomalías en Presión</h5>
+                {% if resultado.anomalias_presion and resultado.anomalias_presion|length > 0 %}
+                    <ul>
+                        {% for a in resultado.anomalias_presion %}
+                            <li>
+                                <strong>{{ a.tipo }}:</strong>
+                                Valor = {{ a.valor }},
+                                Índice = {{ a.indice }},
+                                Razón = {{ a.razon }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">No se detectaron anomalías en presión.</p>
+                {% endif %}
+
+                <hr>
+
+                <!-- TEMPERATURA -->
+                <h5 class="text-warning">Anomalías en Temperatura</h5>
+                {% if resultado.anomalias_temp and resultado.anomalias_temp|length > 0 %}
+                    <ul>
+                        {% for a in resultado.anomalias_temp %}
+                            <li>
+                                <strong>{{ a.tipo }}:</strong>
+                                Valor = {{ a.valor }},
+                                Índice = {{ a.indice }},
+                                Razón = {{ a.razon }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">No se detectaron anomalías en temperatura.</p>
+                {% endif %}
+
+            </div>
+        </div>
+    {% endfor %}
 </div>
+
 {% endblock %}
