@@ -6,14 +6,259 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Análisis de Cohete{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #60a5fa;
+            --secondary-color: #a78bfa;
+            --accent-color: #fdfdfd;
+            --dark-bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.95);
+            --text-light: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-light);
+        }
+
+        /* Navbar Principal */
+        .navbar {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.9) 100%);
+            backdrop-filter: blur(20px);
+            border-bottom: 2px solid rgba(96, 165, 250, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .nav-title {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 50%, var(--accent-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color:aqua;
+            background-clip: text;
+            font-weight: 900;
+            letter-spacing: -2px;
+            animation: pulse-rocket 2s ease-in-out infinite;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-title:hover {
+            transform: scale(1.15) rotate(15deg);
+        }
+
+        /* Menu Principal */
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 5px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-menu li {
+            position: relative;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 12px 18px;
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95em;
+            position: relative;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            opacity: 0.2;
+            transition: left 0.4s ease;
+            z-index: -1;
+        }
+
+        .nav-link:hover::before {
+            left: 0;
+        }
+
+        .nav-link:hover {
+            color: #ffffff;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(96, 165, 250, 0.3);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+            transition: width 0.4s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Menú Hamburguesa para móvil */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 6px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.9) 100%);
+            border-top: 2px solid rgba(96, 165, 250, 0.2);
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 80px;
+            color: #cbd5e1;
+            font-size: 0.95em;
+        }
+
+        .footer p {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 50%, var(--accent-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 600;
+        }
+
+        /* Animaciones */
+        @keyframes pulse-rocket {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-menu {
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.95) 100%);
+                flex-direction: column;
+                gap: 0;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.4s ease;
+                backdrop-filter: blur(20px);
+                border-bottom: 2px solid rgba(96, 165, 250, 0.2);
+            }
+
+            .nav-menu.active {
+                max-height: 500px;
+            }
+
+            .nav-menu li {
+                width: 100%;
+            }
+
+            .nav-link {
+                border-radius: 0;
+                padding: 16px 20px;
+                border-bottom: 1px solid rgba(96, 165, 250, 0.1);
+            }
+
+            .nav-title {
+                font-size: 2em;
+            }
+
+            .nav-container {
+                height: auto;
+                justify-content: space-between;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-container {
+                padding: 0 15px;
+                height: 60px;
+            }
+
+            .nav-title {
+                font-size: 1.8em;
+            }
+
+            .nav-menu li {
+                width: 100%;
+            }
+
+            .nav-link {
+                font-size: 0.9em;
+                padding: 14px 15px;
+            }
+        }
+    </style>
 </head>
 
 <body>
     <!-- Menú de Navegación -->
     <nav class="navbar">
         <div class="nav-container">
-            <h1 class="nav-title">🚀 Análisis de Cohete</h1>
-            <ul class="nav-menu">
+            <h1 class="nav-title">🚀</h1>
+            <ul class="nav-menu" id="navMenu">
                 <li><a href="{{ url_for('main.index') }}" class="nav-link">Inicio</a></li>
                 <li><a href="{{ url_for('validacion_altitud.index') }}" class="nav-link">Validación</a></li>
                 <li><a href="{{ url_for('dashboard_ambiental.index') }}" class="nav-link">Dashboard</a></li>
@@ -25,6 +270,11 @@
                 <li><a href="{{ url_for('formula_exito.index') }}" class="nav-link">Fórmula Éxito</a></li>
                 <li><a href="{{ url_for('prediccion.index') }}" class="nav-link">Predicción</a></li>
             </ul>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </div>
     </nav>
 
@@ -36,6 +286,33 @@
     <footer class="footer">
         <p>&copy; 2025 Análisis de Cohete - Proyecto Universitario</p>
     </footer>
+
+    <script>
+        // Hamburger Menu Toggle
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Cerrar menú al hacer click en un link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+
+        // Cerrar menú al hacer click fuera
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.nav-container')) {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 
 </html>

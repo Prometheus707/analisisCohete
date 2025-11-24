@@ -3,64 +3,335 @@
 {% block title %}Inicio - Análisis de Cohete{% endblock %}
 
 {% block content %}
-<div class="welcome-section">
-    <h2>Bienvenido al Sistema de Análisis de Cohetes</h2>
-    <p>Selecciona una sección del menú para comenzar:</p>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-    <div class="cards-container">
-        <div class="card">
-            <h3>📏 Validación de Altitud</h3>
-            <p>Comparación entre altura teórica y real usando fórmula de Littlewood.</p>
-            <a href="{{ url_for('validacion_altitud.index') }}" class="btn">Ir a Validación</a>
-        </div>
+  body {
+    background: linear-gradient(15deg, rgba(194, 194, 196, 0.315) 0%, rgba(104, 120, 146, 0.201) 50%, rgba(127, 176, 210, 0.356) 100%),
+                url('/static/img/cohete.png') center/cover no-repeat fixed;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #e2e8f0;
+    overflow-x: hidden;
+  }
 
-        <div class="card">
-            <h3>🌡️ Dashboard Ambiental</h3>
-            <p>Comparación de datos del sensor con fuentes meteorológicas externas.</p>
-            <a href="{{ url_for('dashboard_ambiental.index') }}" class="btn">Ir a Dashboard</a>
-        </div>
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
 
-        <div class="card">
-            <h3>📉 Curva Barométrica</h3>
-            <p>Comparación de altitud vs. presión con la Ecuación Barométrica.</p>
-            <a href="{{ url_for('curva_barometrica.index') }}" class="btn">Ir a Curva</a>
-        </div>
+  .header {
+    text-align: center;
+    margin-bottom: 60px;
+    animation: slideDown 0.8s ease-out;
+  }
 
-        <div class="card">
-            <h3>🚀 Fases del Vuelo</h3>
-            <p>Identificación y graficación de fases (ascenso, apogeo, descenso).</p>
-            <a href="{{ url_for('fases_vuelo.index') }}" class="btn">Ir a Fases</a>
-        </div>
+  .header h1 {
+    font-size: 3.5em;
+    -webkit-background-clip: text;
+ 
+    background-clip: text;
+    margin-bottom: 10px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    text-shadow: 0 0 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(96, 165, 250, 0.5);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.7));
+  }
 
-        <div class="card">
-            <h3>🪂 Análisis de Paracaídas</h3>
-            <p>Verificación de despliegue mediante tasa de cambio de presión.</p>
-            <a href="{{ url_for('analisis_paracaidas.index') }}" class="btn">Ir a Paracaídas</a>
-        </div>
+  .header p {
+    font-size: 1.1em;
+    color: #ffffff;
+    font-weight: 600;
+    text-shadow: 0 0 20px rgba(0, 0, 0, 0.8), 0 0 10px rgba(0, 0, 0, 0.6);
+  }
 
-        <div class="card">
-            <h3>💨 Densidad del Aire</h3>
-            <p>Cálculo de densidad y su efecto en el rendimiento del cohete.</p>
-            <a href="{{ url_for('densidad_aire.index') }}" class="btn">Ir a Densidad</a>
-        </div>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+  }
 
-        <div class="card">
-            <h3>⚠️ Detección de Anomalías</h3>
-            <p>Investigación de picos o caídas inesperadas en los datos.</p>
-            <a href="{{ url_for('deteccion_anomalias.index') }}" class="btn">Ir a Anomalías</a>
-        </div>
+  .card {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 76, 117, 0.4) 100%);
+    border: 1px solid rgba(96, 165, 250, 0.2);
+    border-radius: 16px;
+    padding: 30px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    animation: fadeInUp 0.6s ease-out backwards;
+  }
 
-        <div class="card">
-            <h3>🏆 Fórmula del Éxito</h3>
-            <p>Mejor combinación de presión y agua para apogeo óptimo.</p>
-            <a href="{{ url_for('formula_exito.index') }}" class="btn">Ir a Fórmula</a>
-        </div>
+  .card:nth-child(1) { animation-delay: 0.1s; }
+  .card:nth-child(2) { animation-delay: 0.2s; }
+  .card:nth-child(3) { animation-delay: 0.3s; }
+  .card:nth-child(4) { animation-delay: 0.4s; }
+  .card:nth-child(5) { animation-delay: 0.5s; }
+  .card:nth-child(6) { animation-delay: 0.6s; }
+  .card:nth-child(7) { animation-delay: 0.7s; }
+  .card:nth-child(8) { animation-delay: 0.8s; }
+  .card:nth-child(9) { animation-delay: 0.9s; }
 
-         <div class="card">
-            <h3> Predicción</h3>
-            <p>Modelo predictivo simple en Python que estime la altura máxima que se alcanzará a partir de los datos del sensor..</p>
-            <a href="{{ url_for('prediccion.index') }}" class="btn">Ir a Fórmula</a>
-        </div>
+  .card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(96, 165, 250, 0.3) 0%, transparent 70%);
+    border-radius: 50%;
+    transition: all 0.6s ease-out;
+  }
+
+  .card:hover::before {
+    top: -10%;
+    right: -10%;
+    width: 300px;
+    height: 300px;
+  }
+
+  .card:hover {
+    border-color: rgba(96, 165, 250, 0.6);
+    background: linear-gradient(135deg, rgba(135, 141, 150, 0.95) 0%, rgba(15, 76, 117, 0.6) 100%);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 50px rgba(96, 165, 250, 0.2);
+  }
+
+  .card-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .card-icon {
+    font-size: 2.5em;
+    margin-bottom: 16px;
+    display: inline-block;
+    transition: transform 0.4s ease-out;
+  }
+
+  .card:hover .card-icon {
+    transform: scale(1.2) rotateZ(10deg);
+  }
+
+  .card h2 {
+    font-size: 1.5em;
+    margin-bottom: 12px;
+    font-weight: 700;
+    color: #e2e8f0;
+  }
+
+  .card p {
+    font-size: 0.95em;
+    color: #cbd5e1;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  .card-btn {
+    display: inline-block;
+    padding: 10px 24px;
+    background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: left 0.4s ease;
+  }
+
+  .card-btn:hover::before {
+    left: 100%;
+  }
+
+  .card-btn:hover {
+    transform: translateX(4px);
+    box-shadow: 0 10px 25px rgba(96, 165, 250, 0.4);
+  }
+
+  .featured {
+    grid-column: span 1;
+  }
+
+  @media (min-width: 1024px) {
+    .featured {
+      grid-column: span 2;
+    }
+    
+    .featured .card-icon {
+      font-size: 3em;
+    }
+    
+    .featured h2 {
+      font-size: 1.8em;
+    }
+  }
+
+  .footer-note {
+    text-align: center;
+    color: #64748b;
+    font-size: 0.9em;
+    margin-top: 40px;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .header h1 {
+      font-size: 2.2em;
+    }
+
+    .grid {
+      gap: 16px;
+    }
+
+    .card {
+      padding: 24px;
+    }
+    .titulo{
+      color: white !important;
+    }
+    .titulo {
+        color: #ba18a2 !important;
+    }
+  }
+</style>
+
+<div class="container">
+  <div class="header">
+    <h1>🚀 Sistema de Análisis de Cohete</h1>
+    <p>✨ Selecciona una sección para comenzar tu análisis</p>
+     <div class="footer-note">
+  </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-content">
+        <div class="card-icon">📏</div>
+        <h2>Validación de Altitud</h2>
+        <p>Comparación entre altura teórica y real usando fórmula de Littlewood.</p>
+        <a href="/validacion" class="card-btn">Ir a Validación</a>
+      </div>
     </div>
+
+    <div class="card">
+      <div class="card-content">
+        <div class="card-icon">🌡️</div>
+        <h2>Dashboard Ambiental</h2>
+        <p>Comparación de datos del sensor con fuentes meteorológicas externas.</p>
+        <a href="/dashboard" class="card-btn">Ir a Dashboard</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-content">
+        <div class="card-icon">📉</div>
+        <h2>Curva Barométrica</h2>
+        <p>Comparación de altitud vs. presión con la Ecuación Barométrica.</p>
+        <a href="/curva" class="card-btn">Ir a Curva</a>
+      </div>
+    </div>
+
+    <div class="card featured">
+      <div class="card-content">
+        <div class="card-icon">🚀</div>
+        <h2>Fases del Vuelo</h2>
+        <p>Identificación y graficación de fases (ascenso, apogeo, descenso) para entender completamente el comportamiento de tu cohete.</p>
+        <a href="/fases" class="card-btn">Ir a Fases</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-content">
+        <div class="card-icon">🪂</div>
+        <h2>Análisis de Paracaídas</h2>
+        <p>Verificación de despliegue mediante tasa de cambio de presión.</p>
+        <a href="/paracaidas" class="card-btn">Ir a Paracaídas</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-content">
+        <div class="card-icon">💨</div>
+        <h2>Densidad del Aire</h2>
+        <p>Cálculo de densidad y su efecto en el rendimiento del cohete.</p>
+        <a href="/densidad" class="card-btn">Ir a Densidad</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-content">
+        <div class="card-icon">⚠️</div>
+        <h2>Detección de Anomalías</h2>
+        <p>Investigación de picos o caídas inesperadas en los datos.</p>
+        <a href="/anomalias" class="card-btn">Ir a Anomalías</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-content">
+        <div class="card-icon">🏆</div>
+        <h2>Fórmula del Éxito</h2>
+        <p>Mejor combinación de presión y agua para apogeo óptimo.</p>
+        <a href="/formula" class="card-btn">Ir a Fórmula</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-content">
+        <div class="card-icon">🔮</div>
+        <h2>Predicción de Altura</h2>
+        <p>Modelo predictivo simple en Python que estime la altura máxima que se alcanzará a partir de los datos del sensor.</p>
+        <a href="/prediccion" class="card-btn">Ir a Predicción</a>
+      </div>
+    </div>
+  </div>
+
+ 
 </div>
+
 {% endblock %}
