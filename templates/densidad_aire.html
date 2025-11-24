@@ -1,25 +1,535 @@
 {% extends "base.html" %}
 
-{% block title %}Densidad del Aire{% endblock %}
+{% block title %}Densidad del Aire en el Vuelo{% endblock %}
 
 {% block content %}
-<div class="section-content">
-    <h2>💨 Densidad del Aire</h2>
-    <p class="section-description">Cálculo de la densidad del aire durante el vuelo usando datos de temperatura y
-        presión, y análisis de su efecto en el rendimiento.</p>
 
-    <div class="content-box">
-        <h3>Sección en desarrollo</h3>
-        <p>Este espacio está listo para que agregues:</p>
-        <ul>
-            <li>Carga de datos de temperatura y presión</li>
-            <li>Cálculo de densidad usando ecuación de gas ideal</li>
-            <li>Gráfico de densidad vs. altitud</li>
-            <li>Análisis del efecto en resistencia aerodinámica</li>
-            <li>Impacto en velocidad terminal</li>
-            <li>Comparación con modelo atmosférico estándar</li>
-            <li>Recomendaciones para optimizar rendimiento</li>
-        </ul>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .section-content {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 40px 20px;
+    }
+
+    .header-section {
+        text-align: center;
+        color: white;
+        margin-bottom: 50px;
+    }
+
+    .header-section h1 {
+        font-size: 42px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .header-section p {
+        font-size: 16px;
+        opacity: 0.95;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .stats-overview {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+        max-width: 1400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        text-align: center;
+    }
+
+    .stat-card .stat-number {
+        font-size: 36px;
+        font-weight: 700;
+        color: #667eea;
+        margin: 15px 0;
+    }
+
+    .stat-card .stat-label {
+        color: #666;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .flights-container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .flight-card {
+        background: white;
+        border-radius: 18px;
+        padding: 35px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        border-left: 6px solid #667eea;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .flight-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+    }
+
+    .flight-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .flight-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+
+    .flight-metrics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .metric {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        border-left: 4px solid #667eea;
+    }
+
+    .metric-label {
+        font-size: 12px;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+
+    .metric-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: #667eea;
+    }
+
+    .metric-unit {
+        font-size: 12px;
+        color: #999;
+        margin-top: 5px;
+    }
+
+    .charts-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+        gap: 25px;
+        margin-top: 30px;
+    }
+
+    .chart-wrapper {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid #e9ecef;
+    }
+
+    .chart-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    .density-bar {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 18px;
+    }
+
+    .density-label {
+        width: 140px;
+        font-weight: 600;
+        color: #555;
+        font-size: 13px;
+    }
+
+    .bar-container {
+        flex: 1;
+        background: #e9ecef;
+        height: 35px;
+        border-radius: 8px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .bar-fill {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 10px;
+        color: white;
+        font-weight: 600;
+        font-size: 12px;
+    }
+
+    .bar-promedio {
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .bar-minima {
+        background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    .bar-maxima {
+        background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .impact-section {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 20px;
+        border-radius: 12px;
+        border-left: 4px solid #764ba2;
+        margin-top: 20px;
+    }
+
+    .impact-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .impact-text {
+        font-size: 13px;
+        color: #555;
+        line-height: 1.6;
+    }
+
+    .density-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+
+    .density-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        border-top: 5px solid #667eea;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .density-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 36px rgba(0,0,0,0.15);
+    }
+
+    .density-card-name {
+        font-size: 16px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        word-break: break-word;
+    }
+
+    .density-stat {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .density-stat:last-child {
+        border-bottom: none;
+    }
+
+    .stat-name {
+        font-size: 12px;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-data {
+        font-size: 18px;
+        font-weight: 700;
+        color: #667eea;
+    }
+
+    .stat-unit {
+        font-size: 11px;
+        color: #bbb;
+        margin-left: 4px;
+    }
+
+    .comparative-section {
+        background: white;
+        border-radius: 18px;
+        padding: 35px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        margin-bottom: 30px;
+    }
+
+    .comparative-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    .density-comparison {
+        margin-bottom: 35px;
+    }
+
+    .density-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .comparison-name {
+        font-weight: 600;
+        color: #2c3e50;
+        font-size: 14px;
+    }
+
+    .comparison-max {
+        font-size: 12px;
+        color: #999;
+    }
+
+    .flight-item {
+        background: #f8f9fa;
+        padding: 12px 15px;
+        border-radius: 6px;
+        margin-bottom: 8px;
+        font-size: 13px;
+        border-left: 3px solid #667eea;
+    }
+
+    .no-data {
+        background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        color: #92360f;
+        padding: 40px;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 18px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .section-title {
+        color: white;
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 30px;
+        text-align: center;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    @media (max-width: 768px) {
+        .flight-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .header-section h1 {
+            font-size: 28px;
+        }
+
+        .charts-container {
+            grid-template-columns: 1fr;
+        }
+
+        .density-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="section-content">
+    <div class="header-section">
+        <h1>🌬️ Densidad del Aire Durante el Vuelo</h1>
+        <p>Cálculo de la densidad del aire usando presión y temperatura registradas, y su impacto en el apogeo</p>
     </div>
+
+    {% if resultados|length == 0 %}
+        <div class="flights-container">
+            <div class="no-data">
+                ⚠️ No se encontraron datos para analizar.
+            </div>
+        </div>
+    {% else %}
+
+        <!-- Estadísticas Generales -->
+        <div class="stats-overview">
+            <div class="stat-card">
+                <div class="stat-label">Total de vuelos</div>
+                <div class="stat-number">{{ resultados|length }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Densidad promedio general</div>
+                <div class="stat-number">
+                    {% set total_dens = resultados|map(attribute='dens_promedio')|sum %}
+                    {% set avg_dens = total_dens / resultados|length %}
+                    {{ avg_dens | round(3) }}
+                </div>
+                <div style="color: #999; font-size: 12px; margin-top: 5px;">kg/m³</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Densidad mínima registrada</div>
+                <div class="stat-number">
+                    {% set min_dens = resultados|map(attribute='dens_min')|min %}
+                    {{ min_dens | round(3) }}
+                </div>
+                <div style="color: #999; font-size: 12px; margin-top: 5px;">kg/m³</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Densidad máxima registrada</div>
+                <div class="stat-number">
+                    {% set max_dens = resultados|map(attribute='dens_max')|max %}
+                    {{ max_dens | round(3) }}
+                </div>
+                <div style="color: #999; font-size: 12px; margin-top: 5px;">kg/m³</div>
+            </div>
+        </div>
+
+        <!-- Vista de Tarjetas por Vuelo -->
+        <div class="flights-container">
+            <h2 class="section-title">📊 Análisis por Vuelo</h2>
+
+            <div class="density-grid">
+                {% for vuelo in resultados %}
+                <div class="density-card">
+                    <div class="density-card-name">{{ vuelo.archivo }}</div>
+
+                    <div class="density-stat">
+                        <span class="stat-name">Dens. Promedio</span>
+                        <span class="stat-data">{{ vuelo.dens_promedio }}<span class="stat-unit">kg/m³</span></span>
+                    </div>
+
+                    <div class="density-stat">
+                        <span class="stat-name">Dens. Mínima</span>
+                        <span class="stat-data">{{ vuelo.dens_min }}<span class="stat-unit">kg/m³</span></span>
+                    </div>
+
+                    <div class="density-stat">
+                        <span class="stat-name">Dens. Máxima</span>
+                        <span class="stat-data">{{ vuelo.dens_max }}<span class="stat-unit">kg/m³</span></span>
+                    </div>
+
+                    <div class="impact-section">
+                        <div class="impact-title">📈 Impacto en Rendimiento</div>
+                        <div class="impact-text">
+                            {{ vuelo.explicacion }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Sección de Comparación Gráfica -->
+        <div class="flights-container">
+            <div class="comparative-section">
+                <h3 class="comparative-title">📈 Comparativa de Densidades</h3>
+
+                <!-- Densidad Promedio -->
+                <div class="density-comparison">
+                    <div class="density-header">
+                        <span class="comparison-name">Densidad Promedio (kg/m³)</span>
+                        <span class="comparison-max">Máx: {% set max_dens_prom = resultados | map(attribute='dens_promedio') | max %}{{ max_dens_prom }}</span>
+                    </div>
+                    {% for v in resultados | sort(attribute='dens_promedio', reverse=true) %}
+                        <div style="margin-bottom: 12px;">
+                            <div class="bar-container">
+                                <div class="bar-fill bar-promedio" style="width: {{ (v.dens_promedio / max_dens_prom * 100) }}%">
+                                    {{ v.dens_promedio }}
+                                </div>
+                            </div>
+                            <div class="flight-item">
+                                {{ v.archivo }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Densidad Mínima -->
+                <div class="density-comparison">
+                    <div class="density-header">
+                        <span class="comparison-name">Densidad Mínima (kg/m³)</span>
+                        <span class="comparison-max">Máx: {% set max_dens_min = resultados | map(attribute='dens_min') | max %}{{ max_dens_min }}</span>
+                    </div>
+                    {% for v in resultados | sort(attribute='dens_min', reverse=true) %}
+                        <div style="margin-bottom: 12px;">
+                            <div class="bar-container">
+                                <div class="bar-fill bar-minima" style="width: {{ (v.dens_min / max_dens_min * 100) }}%">
+                                    {{ v.dens_min }}
+                                </div>
+                            </div>
+                            <div class="flight-item">
+                                {{ v.archivo }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Densidad Máxima -->
+                <div class="density-comparison">
+                    <div class="density-header">
+                        <span class="comparison-name">Densidad Máxima (kg/m³)</span>
+                        <span class="comparison-max">Máx: {% set max_dens_max = resultados | map(attribute='dens_max') | max %}{{ max_dens_max }}</span>
+                    </div>
+                    {% for v in resultados | sort(attribute='dens_max', reverse=true) %}
+                        <div style="margin-bottom: 12px;">
+                            <div class="bar-container">
+                                <div class="bar-fill bar-maxima" style="width: {{ (v.dens_max / max_dens_max * 100) }}%">
+                                    {{ v.dens_max }}
+                                </div>
+                            </div>
+                            <div class="flight-item">
+                                {{ v.archivo }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    {% endif %}
+
 </div>
+
 {% endblock %}

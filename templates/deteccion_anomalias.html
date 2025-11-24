@@ -1,25 +1,405 @@
 {% extends "base.html" %}
 
-{% block title %}Detección de Anomalías{% endblock %}
-
 {% block content %}
-<div class="section-content">
-    <h2>⚠️ Detección de Anomalías</h2>
-    <p class="section-description">Investigación de picos o caídas inesperadas en datos de temperatura/presión, con
-        propuesta de causas probables (vibración, sombra, error manual, etc.).</p>
 
-    <div class="content-box">
-        <h3>Sección en desarrollo</h3>
-        <p>Este espacio está listo para que agregues:</p>
-        <ul>
-            <li>Carga de datos de temperatura y presión</li>
-            <li>Algoritmos de detección de anomalías estadísticas</li>
-            <li>Identificación de picos y caídas inesperadas</li>
-            <li>Análisis temporal de anomalías</li>
-            <li>Sistema experto para proponer causas probables</li>
-            <li>Gráficos con marcadores de anomalías</li>
-            <li>Reporte detallado con recomendaciones</li>
-        </ul>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+    }
+
+    .container {
+        max-width: 1400px;
+        padding: 40px 20px;
+    }
+
+    .header-section {
+        text-align: center;
+        color: white;
+        margin-bottom: 50px;
+    }
+
+    .header-section h1 {
+        font-size: 42px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .header-section p {
+        font-size: 16px;
+        opacity: 0.95;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-top: 5px solid #667eea;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 36px rgba(0,0,0,0.15);
+    }
+
+    .stat-card.pressure {
+        border-top: 5px solid #4facfe;
+    }
+
+    .stat-card.temperature {
+        border-top: 5px solid #f5576c;
+    }
+
+    .stat-card.altitude {
+        border-top: 5px solid #43e97b;
+    }
+
+    .stat-label {
+        font-size: 13px;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+
+    .stat-value {
+        font-size: 42px;
+        font-weight: 700;
+        color: #667eea;
+        margin-bottom: 8px;
+    }
+
+    .stat-unit {
+        font-size: 14px;
+        color: #999;
+    }
+
+    .stat-icon {
+        font-size: 32px;
+        margin-bottom: 15px;
+    }
+
+    .info-card {
+        background: white;
+        border-radius: 18px;
+        padding: 35px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        margin-bottom: 30px;
+    }
+
+    .info-card-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .info-card-title-icon {
+        font-size: 28px;
+    }
+
+    .measurements-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .measurement-item {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 20px;
+        border-radius: 12px;
+        border-left: 4px solid #667eea;
+    }
+
+    .measurement-item.pressure {
+        border-left: 4px solid #4facfe;
+    }
+
+    .measurement-item.temperature {
+        border-left: 4px solid #f5576c;
+    }
+
+    .measurement-item.altitude {
+        border-left: 4px solid #43e97b;
+    }
+
+    .measurement-label {
+        font-size: 12px;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    .measurement-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: #667eea;
+    }
+
+    .measurement-value.pressure {
+        color: #4facfe;
+    }
+
+    .measurement-value.temperature {
+        color: #f5576c;
+    }
+
+    .measurement-value.altitude {
+        color: #43e97b;
+    }
+
+    .measurement-unit {
+        font-size: 12px;
+        color: #999;
+        margin-top: 5px;
+    }
+
+    .no-data-message {
+        background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        color: #92360f;
+        padding: 15px;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+
+    .diagnosis-section {
+        background: white;
+        border-radius: 18px;
+        padding: 35px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    }
+
+    .diagnosis-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .diagnosis-title-icon {
+        font-size: 28px;
+    }
+
+    .diagnosis-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 20px;
+    }
+
+    .diagnosis-item {
+        background: white;
+        padding: 0;
+        border-radius: 12px;
+        border: 2px solid #667eea;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .diagnosis-comparison {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        min-height: 120px;
+    }
+
+    .diagnosis-side {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    .diagnosis-side.expected {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-right: 2px solid rgba(255,255,255,0.3);
+    }
+
+    .diagnosis-side.actual {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        color: #2c3e50;
+    }
+
+    .diagnosis-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: 0.8;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+
+    .diagnosis-value {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .diagnosis-unit {
+        font-size: 12px;
+        opacity: 0.7;
+    }
+
+    .diagnosis-item.anomaly {
+        border: 2px solid #f5576c;
+    }
+
+    .diagnosis-item.anomaly .diagnosis-side.expected {
+        background: linear-gradient(135deg, #f5576c 0%, #ee5a6f 100%);
+    }
+
+    .diagnosis-item.normal {
+        border: 2px solid #43e97b;
+    }
+
+    .diagnosis-item.normal .diagnosis-side.expected {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        border-radius: 12px;
+        color: #92360f;
+    }
+
+    .empty-state-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+    }
+
+    .empty-state-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    @media (max-width: 768px) {
+        .header-section h1 {
+            font-size: 28px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+        }
+
+        .measurements-container {
+            grid-template-columns: 1fr;
+        }
+
+        .diagnosis-list {
+            grid-template-columns: 1fr;
+        }
+
+        .info-card {
+            padding: 20px;
+        }
+
+        .diagnosis-section {
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="header-section">
+        <h1>🔍 Detección Global de Anomalías</h1>
+        <p>Análisis basado en el promedio de los 4 vuelos y comparación con las condiciones reales del día del lanzamiento</p>
     </div>
+
+    <!-- Tarjetas de Estadísticas Rápidas -->
+    <div class="stats-grid">
+        {% if promedio_presion %}
+        <div class="stat-card pressure">
+            <div class="stat-icon">🔽</div>
+            <div class="stat-label">Presión Promedio</div>
+            <div class="stat-value">{{ promedio_presion|round(2) }}</div>
+            <div class="stat-unit">hPa</div>
+        </div>
+        {% endif %}
+
+        {% if promedio_temperatura %}
+        <div class="stat-card temperature">
+            <div class="stat-icon">🌡️</div>
+            <div class="stat-label">Temperatura Promedio</div>
+            <div class="stat-value">{{ promedio_temperatura|round(2) }}</div>
+            <div class="stat-unit">°C</div>
+        </div>
+        {% endif %}
+
+        <div class="stat-card altitude">
+            <div class="stat-icon">📈</div>
+            <div class="stat-label">Altura Promedio</div>
+            <div class="stat-value">{{ promedio_altura|round(0) }}</div>
+            <div class="stat-unit">metros</div>
+        </div>
+    </div>
+
+    <!-- Tarjeta de Promedios Calculados -->
+   
+
+    <!-- Tarjeta de Diagnóstico Global -->
+    <div class="diagnosis-section">
+        <div class="diagnosis-title">
+            <span class="diagnosis-title-icon">🧭</span>
+            Diagnóstico Global
+        </div>
+
+        {% if diagnostico %}
+        <div class="diagnosis-list">
+            {% for d in diagnostico %}
+            <div class="diagnosis-item {% if 'anomalía' in d.lower() or 'anómala' in d.lower() or 'error' in d.lower() or 'problema' in d.lower() %}anomaly{% else %}normal{% endif %}">
+                <div class="diagnosis-comparison">
+                    <div class="diagnosis-side expected">
+                        <div class="diagnosis-label">Esperado / Análisis</div>
+                        <div class="diagnosis-value">✓</div>
+                    </div>
+                    <div class="diagnosis-side actual">
+                        <div class="diagnosis-label">Resultado Registrado</div>
+                        <div class="diagnosis-value" style="font-size: 18px; line-height: 1.4;">{{ d }}</div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">⚠️</div>
+            <div class="empty-state-title">Sin Diagnóstico</div>
+            <p>No se generó diagnóstico. Por favor, verifica que todos los datos estén disponibles.</p>
+        </div>
+        {% endif %}
+    </div>
+
 </div>
+
 {% endblock %}
