@@ -3,24 +3,547 @@
 {% block title %}Fórmula del Éxito{% endblock %}
 
 {% block content %}
-<div class="section-content">
-    <h2>🏆 Fórmula del Éxito</h2>
-    <p class="section-description">Análisis de qué combinación de presión y agua generó el mejor apogeo, determinando la
-        fórmula óptima del éxito.</p>
 
-    <div class="content-box">
-        <h3>Sección en desarrollo</h3>
-        <p>Este espacio está listo para que agregues:</p>
-        <ul>
-            <li>Carga de datos de múltiples lanzamientos</li>
-            <li>Registro de presión inicial y cantidad de agua</li>
-            <li>Cálculo de apogeo alcanzado en cada caso</li>
-            <li>Análisis de correlación presión-agua-apogeo</li>
-            <li>Gráficos 3D de superficie de optimización</li>
-            <li>Determinación de combinación óptima</li>
-            <li>Predictor de apogeo para nuevas combinaciones</li>
-            <li>Recomendaciones para futuros lanzamientos</li>
-        </ul>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .section-content {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 40px 20px;
+    }
+
+    .header-section {
+        text-align: center;
+        color: white;
+        margin-bottom: 50px;
+    }
+
+    .header-section h1 {
+        font-size: 42px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .header-section p {
+        font-size: 16px;
+        opacity: 0.95;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .champion-card {
+        background: white;
+        border-radius: 18px;
+        padding: 40px;
+        margin-bottom: 40px;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        border-top: 6px solid #ffc107;
+        max-width: 1400px;
+        margin-left: auto;
+        margin-right: auto;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .champion-card::before {
+        content: "🏆";
+        position: absolute;
+        font-size: 150px;
+        opacity: 0.05;
+        right: -30px;
+        top: -40px;
+        z-index: 0;
+    }
+
+    .champion-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 35px;
+        padding-bottom: 25px;
+        border-bottom: 3px solid #ffc107;
+        position: relative;
+        z-index: 1;
+    }
+
+    .champion-title {
+        font-size: 32px;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+
+    .champion-badge {
+        background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 16px;
+        box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+    }
+
+    .champion-metrics {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .champion-metric {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 25px;
+        border-radius: 12px;
+        text-align: center;
+        border-left: 4px solid #667eea;
+    }
+
+    .champion-metric-label {
+        font-size: 12px;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    .champion-metric-value {
+        font-size: 32px;
+        font-weight: 700;
+        color: #667eea;
+        margin-bottom: 5px;
+    }
+
+    .champion-metric-unit {
+        font-size: 13px;
+        color: #999;
+    }
+
+    .launches-container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .section-title {
+        color: white;
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 30px;
+        text-align: center;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .launches-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+
+    .launch-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-top: 5px solid #667eea;
+    }
+
+    .launch-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 36px rgba(0,0,0,0.15);
+    }
+
+    .launch-card.best {
+        border-top: 5px solid #ffc107;
+        box-shadow: 0 8px 24px rgba(255, 193, 7, 0.3);
+    }
+
+    .launch-name {
+        font-size: 16px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        word-break: break-word;
+    }
+
+    .launch-stat {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .launch-stat:last-child {
+        border-bottom: none;
+    }
+
+    .stat-label {
+        font-size: 12px;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: #667eea;
+    }
+
+    .stat-unit {
+        font-size: 11px;
+        color: #bbb;
+        margin-left: 4px;
+    }
+
+    .ranking-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        margin-top: 15px;
+    }
+
+    .ranking-badge.first {
+        background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+    }
+
+    .ranking-badge.second {
+        background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+        color: #333;
+    }
+
+    .ranking-badge.third {
+        background: linear-gradient(135deg, #cd7f32 0%, #d4a373 100%);
+    }
+
+    .comparative-section {
+        background: white;
+        border-radius: 18px;
+        padding: 35px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        margin-bottom: 30px;
+    }
+
+    .comparative-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    .metric-comparison {
+        margin-bottom: 30px;
+    }
+
+    .metric-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .metric-name {
+        font-weight: 600;
+        color: #2c3e50;
+        font-size: 14px;
+    }
+
+    .metric-max {
+        font-size: 12px;
+        color: #999;
+    }
+
+    .bar-container {
+        background: #e9ecef;
+        height: 30px;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 8px;
+    }
+
+    .bar-fill {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 12px;
+        color: white;
+        font-weight: 600;
+        font-size: 12px;
+        border-radius: 8px;
+        transition: width 0.5s ease;
+    }
+
+    .bar-apogeo {
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .bar-eficiencia {
+        background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+    }
+
+    .bar-presion {
+        background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .bar-agua {
+        background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    .launch-item {
+        background: #f8f9fa;
+        padding: 12px 15px;
+        border-radius: 6px;
+        margin-bottom: 8px;
+        font-size: 13px;
+        border-left: 3px solid #667eea;
+    }
+
+    .launch-item.best {
+        border-left: 3px solid #ffc107;
+        background: #fffbf0;
+    }
+
+    .no-data {
+        background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        color: #92360f;
+        padding: 40px;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 18px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    @media (max-width: 768px) {
+        .champion-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .header-section h1 {
+            font-size: 28px;
+        }
+
+        .launches-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .champion-card {
+            padding: 25px;
+        }
+    }
+</style>
+
+<div class="section-content">
+    <div class="header-section">
+        <h1>🚀 Fórmula del Éxito</h1>
+        <p>Análisis de cuál combinación de presión y agua produjo el mejor apogeo real</p>
     </div>
+
+    {% if mejor %}
+
+        <!-- Tarjeta del Campeón -->
+        <div class="champion-card">
+            <div class="champion-header">
+                <div>
+                    <div class="champion-title">🏆 Mejor Lanzamiento</div>
+                    <div style="color: #999; font-size: 13px; margin-top: 5px;">{{ mejor.archivo }}</div>
+                </div>
+                <div class="champion-badge">
+                    Apogeo: {{ mejor.apogeo }} m
+                </div>
+            </div>
+
+            <div class="champion-metrics">
+                <div class="champion-metric">
+                    <div class="champion-metric-label">Apogeo alcanzado</div>
+                    <div class="champion-metric-value">{{ mejor.apogeo }}</div>
+                    <div class="champion-metric-unit">metros</div>
+                </div>
+                <div class="champion-metric">
+                    <div class="champion-metric-label">Presión utilizada</div>
+                    <div class="champion-metric-value">{{ mejor.presion }}</div>
+                    <div class="champion-metric-unit">PSI</div>
+                </div>
+                <div class="champion-metric">
+                    <div class="champion-metric-label">Volumen de agua</div>
+                    <div class="champion-metric-value">{{ mejor.agua }}</div>
+                    <div class="champion-metric-unit">litros</div>
+                </div>
+                <div class="champion-metric">
+                    <div class="champion-metric-label">Eficiencia</div>
+                    <div class="champion-metric-value">{{ mejor.eficiencia }}</div>
+                    <div class="champion-metric-unit">m/L</div>
+                </div>
+                <div class="champion-metric">
+                    <div class="champion-metric-label">Tiempo en apogeo</div>
+                    <div class="champion-metric-value">{{ mejor.tiempo_apogeo }}</div>
+                    <div class="champion-metric-unit">segundos</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de comparación de todos los lanzamientos -->
+        <div class="launches-container">
+            <h2 class="section-title">📊 Todos los Lanzamientos</h2>
+
+            <!-- Grid de tarjetas -->
+            <div class="launches-grid">
+                {% set sorted_results = resultados | sort(attribute='apogeo', reverse=true) %}
+                {% for v in sorted_results %}
+                    {% set is_best = (v.apogeo == mejor.apogeo) %}
+                    <div class="launch-card {% if is_best %}best{% endif %}">
+                        <div class="launch-name">{{ v.archivo }}</div>
+
+                        <div class="launch-stat">
+                            <span class="stat-label">Apogeo</span>
+                            <span class="stat-value">{{ v.apogeo }}<span class="stat-unit">m</span></span>
+                        </div>
+
+                        <div class="launch-stat">
+                            <span class="stat-label">Presión</span>
+                            <span class="stat-value">{{ v.presion }}<span class="stat-unit">PSI</span></span>
+                        </div>
+
+                        <div class="launch-stat">
+                            <span class="stat-label">Agua</span>
+                            <span class="stat-value">{{ v.agua }}<span class="stat-unit">L</span></span>
+                        </div>
+
+                        <div class="launch-stat">
+                            <span class="stat-label">Eficiencia</span>
+                            <span class="stat-value">{{ v.eficiencia }}<span class="stat-unit">m/L</span></span>
+                        </div>
+
+                        <div class="launch-stat">
+                            <span class="stat-label">Tiempo apogeo</span>
+                            <span class="stat-value">{{ v.tiempo_apogeo }}<span class="stat-unit">s</span></span>
+                        </div>
+
+                        {% if is_best %}
+                            <span class="ranking-badge first">🥇 Campeón</span>
+                        {% elif loop.index == 2 %}
+                            <span class="ranking-badge second">🥈 2º Lugar</span>
+                        {% elif loop.index == 3 %}
+                            <span class="ranking-badge third">🥉 3º Lugar</span>
+                        {% else %}
+                            <span class="ranking-badge">Posición {{ loop.index }}</span>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Sección de comparación visual -->
+        <div class="launches-container">
+            <div class="comparative-section">
+                <h3 class="comparative-title">📈 Análisis Comparativo</h3>
+
+                <!-- Apogeo -->
+                <div class="metric-comparison">
+                    <div class="metric-header">
+                        <span class="metric-name">Apogeo Alcanzado (m)</span>
+                        <span class="metric-max">Máx: {% set max_apogeo = resultados | map(attribute='apogeo') | max %}{{ max_apogeo }}</span>
+                    </div>
+                    {% for v in resultados | sort(attribute='apogeo', reverse=true) %}
+                        <div style="margin-bottom: 10px;">
+                            <div class="bar-container">
+                                <div class="bar-fill bar-apogeo" style="width: {{ (v.apogeo / max_apogeo * 100) }}%">
+                                    {{ v.apogeo }}m
+                                </div>
+                            </div>
+                            <div class="launch-item {% if v.apogeo == mejor.apogeo %}best{% endif %}">
+                                {{ v.archivo }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Eficiencia -->
+                <div class="metric-comparison">
+                    <div class="metric-header">
+                        <span class="metric-name">Eficiencia (m/L)</span>
+                        <span class="metric-max">Máx: {% set max_eficiencia = resultados | map(attribute='eficiencia') | max %}{{ max_eficiencia }}</span>
+                    </div>
+                    {% for v in resultados | sort(attribute='eficiencia', reverse=true) %}
+                        <div style="margin-bottom: 10px;">
+                            <div class="bar-container">
+                                <div class="bar-fill bar-eficiencia" style="width: {{ (v.eficiencia / max_eficiencia * 100) }}%">
+                                    {{ v.eficiencia }}
+                                </div>
+                            </div>
+                            <div class="launch-item {% if v.eficiencia == mejor.eficiencia %}best{% endif %}">
+                                {{ v.archivo }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Presión -->
+                <div class="metric-comparison">
+                    <div class="metric-header">
+                        <span class="metric-name">Presión (PSI)</span>
+                        <span class="metric-max">Máx: {% set max_presion = resultados | map(attribute='presion') | max %}{{ max_presion }}</span>
+                    </div>
+                    {% for v in resultados | sort(attribute='presion', reverse=true) %}
+                        <div style="margin-bottom: 10px;">
+                            <div class="bar-container">
+                                <div class="bar-fill bar-presion" style="width: {{ (v.presion / max_presion * 100) }}%">
+                                    {{ v.presion }}
+                                </div>
+                            </div>
+                            <div class="launch-item">
+                                {{ v.archivo }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Agua -->
+                <div class="metric-comparison">
+                    <div class="metric-header">
+                        <span class="metric-name">Volumen de Agua (L)</span>
+                        <span class="metric-max">Máx: {% set max_agua = resultados | map(attribute='agua') | max %}{{ max_agua }}</span>
+                    </div>
+                    {% for v in resultados | sort(attribute='agua', reverse=true) %}
+                        <div style="margin-bottom: 10px;">
+                            <div class="bar-container">
+                                <div class="bar-fill bar-agua" style="width: {{ (v.agua / max_agua * 100) }}%">
+                                    {{ v.agua }}L
+                                </div>
+                            </div>
+                            <div class="launch-item">
+                                {{ v.archivo }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+
+        <div class="no-data">
+            ⚠️ No se encontraron archivos CSV para analizar.
+        </div>
+
+    {% endif %}
+
 </div>
+
 {% endblock %}
