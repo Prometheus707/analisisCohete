@@ -4,6 +4,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import os
 
+
 bp = Blueprint('analisis_paracaidas', __name__, url_prefix='/analisis-paracaidas')
 
 # ============================================================================

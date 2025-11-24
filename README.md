@@ -3,4 +3,5 @@
 3: pip3 install flask
 4: pip install pandas
 5: pip install plotly
-6: correr proyecto: python app.py
+6: pip install scikit-learn
+7: correr proyecto: python app.py

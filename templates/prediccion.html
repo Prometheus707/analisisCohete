@@ -1,0 +1,516 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+    }
+
+    .container {
+        max-width: 1400px;
+        padding: 40px 20px;
+    }
+
+    .header-section {
+        text-align: center;
+        color: white;
+        margin-bottom: 50px;
+    }
+
+    .header-section h1 {
+        font-size: 48px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .header-section p {
+        font-size: 16px;
+        opacity: 0.95;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .prediction-showcase {
+        background: white;
+        border-radius: 20px;
+        padding: 0;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        margin-bottom: 40px;
+        overflow: hidden;
+        border-top: 8px solid #ffc107;
+    }
+
+    .prediction-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+
+    .prediction-label {
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        opacity: 0.9;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    .prediction-value {
+        font-size: 72px;
+        font-weight: 700;
+        margin-bottom: 5px;
+        text-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .prediction-unit {
+        font-size: 18px;
+        opacity: 0.9;
+    }
+
+    .prediction-details {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 30px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        border-top: 2px solid rgba(0,0,0,0.1);
+    }
+
+    .detail-item {
+        text-align: center;
+    }
+
+    .detail-label {
+        font-size: 12px;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+
+    .detail-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: #667eea;
+    }
+
+    .detail-unit {
+        font-size: 11px;
+        color: #999;
+        margin-top: 3px;
+    }
+
+    .how-it-works {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        margin-bottom: 40px;
+    }
+
+    .section-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .section-title-icon {
+        font-size: 32px;
+    }
+
+    .introduction-text {
+        font-size: 16px;
+        color: #555;
+        line-height: 1.8;
+        margin-bottom: 30px;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 20px;
+        border-radius: 12px;
+        border-left: 5px solid #667eea;
+    }
+
+    .model-features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        border-top: 5px solid #667eea;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    .feature-icon {
+        font-size: 32px;
+        margin-bottom: 15px;
+    }
+
+    .feature-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+
+    .feature-description {
+        font-size: 14px;
+        color: #666;
+        line-height: 1.6;
+    }
+
+    .model-specifications {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        padding: 30px;
+        color: white;
+        margin-bottom: 40px;
+    }
+
+    .specs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 25px;
+    }
+
+    .spec-item {
+        text-align: center;
+        padding: 20px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 12px;
+        border: 2px solid rgba(255,255,255,0.2);
+    }
+
+    .spec-number {
+        font-size: 36px;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .spec-label {
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: 0.9;
+    }
+
+    .advantages-section {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    }
+
+    .advantages-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+    }
+
+    .advantage-item {
+        display: flex;
+        gap: 20px;
+    }
+
+    .advantage-icon {
+        font-size: 32px;
+        flex-shrink: 0;
+    }
+
+    .advantage-content h4 {
+        font-size: 16px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 8px;
+    }
+
+    .advantage-content p {
+        font-size: 13px;
+        color: #666;
+        line-height: 1.6;
+    }
+
+    .variables-section {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border-radius: 15px;
+        padding: 25px;
+        margin-top: 30px;
+    }
+
+    .variables-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 15px;
+    }
+
+    .variables-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+    }
+
+    .variable-item {
+        background: white;
+        padding: 12px 15px;
+        border-radius: 8px;
+        font-size: 13px;
+        color: #555;
+        border-left: 3px solid #667eea;
+        font-weight: 500;
+    }
+
+    .cta-section {
+        text-align: center;
+        margin-top: 50px;
+        padding: 40px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    }
+
+    .cta-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 15px;
+    }
+
+    .cta-description {
+        font-size: 16px;
+        color: #666;
+        margin-bottom: 25px;
+    }
+
+    @media (max-width: 768px) {
+        .header-section h1 {
+            font-size: 32px;
+        }
+
+        .prediction-value {
+            font-size: 48px;
+        }
+
+        .how-it-works,
+        .advantages-section,
+        .cta-section {
+            padding: 25px;
+        }
+
+        .section-title {
+            font-size: 22px;
+        }
+
+        .model-features {
+            grid-template-columns: 1fr;
+        }
+
+        .specs-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .advantages-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header-section">
+        <h1>🤖 Laboratorio de Predicción</h1>
+        <p>IA Avanzada para estimar el rendimiento máximo de tus vuelos</p>
+    </div>
+
+    <!-- Predicción Principal -->
+    <div class="prediction-showcase">
+        <div class="prediction-header">
+            <div class="prediction-label">🎯 Altura Máxima Estimada</div>
+            <div class="prediction-value">{{ prediccion }}</div>
+            <div class="prediction-unit">metros (m)</div>
+        </div>
+        <div class="prediction-details">
+            <div class="detail-item">
+                <div class="detail-label">Modelo Utilizado</div>
+                <div class="detail-value">{{ modelo_usado }}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Vuelos Analizados</div>
+                <div class="detail-value">{{ vuelos }}</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Precisión</div>
+                <div class="detail-value">Alta</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cómo Funciona -->
+    <div class="how-it-works">
+        <div class="section-title">
+            <span class="section-title-icon">🧠</span>
+            ¿Cómo funciona esta predicción?
+        </div>
+
+        <div class="introduction-text">
+            El sistema utiliza un modelo de <strong>Machine Learning</strong> llamado <strong>Random Forest Regressor</strong>, 
+            entrenado con los datos reales obtenidos de tus vuelos. Esta tecnología avanzada analiza patrones complejos 
+            para proporcionar predicciones precisas y confiables.
+        </div>
+
+        <!-- Variables de Entrada -->
+        <div class="variables-section">
+            <div class="variables-title">📊 Variables Analizadas</div>
+            <div class="variables-list">
+                <div class="variable-item">✓ Presión (hPa)</div>
+                <div class="variable-item">✓ Temperatura (°C)</div>
+                <div class="variable-item">✓ Aceleración (m/s²)</div>
+                <div class="variable-item">✓ Velocidad (m/s)</div>
+                <div class="variable-item">✓ Tiempo (s)</div>
+            </div>
+        </div>
+
+        <!-- Características del Modelo -->
+        <div style="margin-top: 40px;">
+            <h3 style="font-size: 22px; font-weight: 700; color: #2c3e50; margin-bottom: 25px;">🎯 Características del Modelo</h3>
+            <div class="model-features">
+                <div class="feature-card">
+                    <div class="feature-icon">🌳</div>
+                    <div class="feature-title">500 Árboles de Decisión</div>
+                    <div class="feature-description">
+                        El modelo utiliza un bosque de 500 árboles independientes que trabajan juntos para generar predicciones más robustas y precisas.
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🧩</div>
+                    <div class="feature-title">Análisis Complejo</div>
+                    <div class="feature-description">
+                        Detecta patrones no lineales y relaciones complejas entre variables que los modelos simples no pueden capturar.
+                    </div>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <div class="feature-title">Evita Sobreajuste</div>
+                    <div class="feature-description">
+                        La arquitectura de bosque aleatorio previene que el modelo memorice datos, mejorando su capacidad de generalización.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Especificaciones Técnicas -->
+    <div class="model-specifications">
+        <h3 style="font-size: 22px; font-weight: 700; margin-bottom: 30px; text-align: center;">⚙️ Especificaciones Técnicas</h3>
+        <div class="specs-grid">
+            <div class="spec-item">
+                <div class="spec-number">500</div>
+                <div class="spec-label">Árboles de Decisión</div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-number">5</div>
+                <div class="spec-label">Variables de Entrada</div>
+            </div>
+            <div class="spec-item">
+                <div class="spec-number">{{ vuelos }}</div>
+                <div class="spec-label">Datos de Entrenamiento</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ventajas del Random Forest -->
+    <div class="advantages-section">
+        <div class="section-title">
+            <span class="section-title-icon">✨</span>
+            Ventajas del Random Forest vs Regresión Lineal
+        </div>
+
+        <div class="advantages-grid">
+            <div class="advantage-item">
+                <div class="advantage-icon">✔</div>
+                <div class="advantage-content">
+                    <h4>Manejo de Ruido</h4>
+                    <p>Tolera inconsistencias en los datos sin afectar significativamente las predicciones</p>
+                </div>
+            </div>
+
+            <div class="advantage-item">
+                <div class="advantage-icon">✔</div>
+                <div class="advantage-content">
+                    <h4>Patrones No Lineales</h4>
+                    <p>Detecta relaciones complejas entre variables que un modelo lineal no puede capturar</p>
+                </div>
+            </div>
+
+            <div class="advantage-item">
+                <div class="advantage-icon">✔</div>
+                <div class="advantage-content">
+                    <h4>Bosque de Árboles</h4>
+                    <p>Utiliza múltiples modelos que votan juntos para evitar errores individuales</p>
+                </div>
+            </div>
+
+            <div class="advantage-item">
+                <div class="advantage-icon">✔</div>
+                <div class="advantage-content">
+                    <h4>Generalización Mejorada</h4>
+                    <p>La estructura de ensemble evita el sobreajuste mejorando la precisión en datos nuevos</p>
+                </div>
+            </div>
+
+            <div class="advantage-item">
+                <div class="advantage-icon">✔</div>
+                <div class="advantage-content">
+                    <h4>Importancia de Variables</h4>
+                    <p>Identifica qué variables tienen mayor impacto en la predicción del apogeo</p>
+                </div>
+            </div>
+
+            <div class="advantage-item">
+                <div class="advantage-icon">✔</div>
+                <div class="advantage-content">
+                    <h4>Escalabilidad</h4>
+                    <p>Funciona eficientemente con grandes volúmenes de datos de múltiples vuelos</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Llamado a la Acción -->
+    <div class="cta-section">
+        <div class="cta-title">🚀 ¿Listo para la próxima predicción?</div>
+        <div class="cta-description">
+            Este modelo está optimizado y listo para utilizarse en nuevos lanzamientos. 
+            Proporciona estimaciones precisas basadas en los patrones aprendidos de tus vuelos anteriores.
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
