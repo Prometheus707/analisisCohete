@@ -1,5 +1,4 @@
 timestamp_ms,pressure_pa,temp_c,altitude_m,servo_state,event,time_s
-timestamp_ms,pressure_pa,temp_c,altitude_m,servo_state,event,time_s
 0,83300.0,28.2,0.0,0,flight,0.0
 46,83300.0,28.2,0.0,0,flight,0.05
 93,83300.0,28.2,0.0,0,flight,0.09

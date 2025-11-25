@@ -3,22 +3,741 @@
 {% block title %}Dashboard Ambiental{% endblock %}
 
 {% block content %}
-<div class="section-content">
-    <h2>🌡️ Dashboard Ambiental</h2>
-    <p class="section-description">Comparación de temperatura y presión del sensor con datos de fuentes meteorológicas
-        externas (APP o web).</p>
+<style>
+  body {
+    background: linear-gradient(15deg, rgba(194, 194, 196, 0.315) 0%, rgba(104, 120, 146, 0.201) 50%, rgba(127, 176, 210, 0.356) 100%),
+                url('/static/img/cohete.png') center/cover no-repeat fixed;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-    <div class="content-box">
-        <h3>Sección en desarrollo</h3>
-        <p>Este espacio está listo para que agregues:</p>
-        <ul>
-            <li>Visualización de datos del sensor en tiempo real</li>
-            <li>Integración con API meteorológica externa (OpenWeatherMap, etc.)</li>
-            <li>Comparación lado a lado de temperatura y presión</li>
-            <li>Gráficos de tendencias temporales</li>
-            <li>Alertas de discrepancias significativas</li>
-            <li>Tabla comparativa con diferencias porcentuales</li>
-        </ul>
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+    animation: slideDown 0.8s ease-out;
+  }
+
+  .header h1 {
+    font-size: 3em;
+    color: #ffffff;
+    margin-bottom: 10px;
+    font-weight: 800;
+    text-shadow: 0 0 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(96, 165, 250, 0.5);
+  }
+
+  .header p {
+    font-size: 1.1em;
+    color: #ffffff;
+    font-weight: 600;
+    text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+  }
+
+  .controls-card {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 76, 117, 0.4) 100%);
+    border: 1px solid rgba(96, 165, 250, 0.2);
+    border-radius: 16px;
+    padding: 25px;
+    backdrop-filter: blur(10px);
+    margin-bottom: 25px;
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  .form-group {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .form-group label {
+    font-weight: 600;
+    color: #e2e8f0;
+    font-size: 1rem;
+  }
+
+  .form-group select {
+    flex: 1;
+    min-width: 250px;
+    padding: 12px 20px;
+    border: 2px solid rgba(96, 165, 250, 0.3);
+    border-radius: 8px;
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+  }
+
+  .form-group select:hover {
+    border-color: rgba(96, 165, 250, 0.6);
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .form-group select option {
+    background: #1e293b;
+    color: #e2e8f0;
+  }
+
+  .btn-analyze {
+    padding: 12px 30px;
+    background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-analyze::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: left 0.4s ease;
+  }
+
+  .btn-analyze:hover::before {
+    left: 100%;
+  }
+
+  .btn-analyze:hover {
+    transform: translateX(4px);
+    box-shadow: 0 10px 25px rgba(96, 165, 250, 0.4);
+  }
+
+  .btn-analyze:disabled {
+    background: rgba(100, 116, 139, 0.5);
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 25px;
+  }
+
+  .stat-card {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 76, 117, 0.4) 100%);
+    border: 1px solid rgba(96, 165, 250, 0.2);
+    border-radius: 16px;
+    padding: 25px;
+    backdrop-filter: blur(10px);
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+    animation: fadeInUp 0.6s ease-out backwards;
+  }
+
+  .stat-card:nth-child(1) { animation-delay: 0.1s; }
+  .stat-card:nth-child(2) { animation-delay: 0.2s; }
+  .stat-card:nth-child(3) { animation-delay: 0.3s; }
+  .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+  .stat-card:hover {
+    border-color: rgba(96, 165, 250, 0.6);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 50px rgba(96, 165, 250, 0.2);
+  }
+
+  .stat-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  .stat-icon {
+    font-size: 2rem;
+  }
+
+  .stat-title {
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 5px;
+  }
+
+  .stat-subtitle {
+    color: #94a3b8;
+    font-size: 0.85rem;
+  }
+
+  .comparison {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(96, 165, 250, 0.2);
+  }
+
+  .comparison-item {
+    flex: 1;
+    text-align: center;
+    padding: 8px;
+    border-radius: 8px;
+    background: rgba(15, 23, 42, 0.4);
+  }
+
+  .comparison-label {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-bottom: 3px;
+  }
+
+  .comparison-value {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #e2e8f0;
+  }
+
+  .positive {
+    color: #10b981 !important;
+  }
+
+  .negative {
+    color: #ef4444 !important;
+  }
+
+  .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 25px;
+  }
+
+  .chart-card {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 76, 117, 0.4) 100%);
+    border: 1px solid rgba(96, 165, 250, 0.2);
+    border-radius: 16px;
+    padding: 25px;
+    backdrop-filter: blur(10px);
+    transition: all 0.4s ease;
+    animation: fadeInUp 0.8s ease-out backwards;
+  }
+
+  .chart-card:nth-child(1) { animation-delay: 0.5s; }
+  .chart-card:nth-child(2) { animation-delay: 0.6s; }
+  .chart-card:nth-child(3) { animation-delay: 0.7s; }
+  .chart-card:nth-child(4) { animation-delay: 0.8s; }
+
+  .chart-card:hover {
+    border-color: rgba(96, 165, 250, 0.6);
+    box-shadow: 0 15px 40px rgba(96, 165, 250, 0.2);
+  }
+
+  .chart-title {
+    color: #e2e8f0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-align: center;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .loading {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 76, 117, 0.4) 100%);
+    border: 1px solid rgba(96, 165, 250, 0.2);
+    border-radius: 16px;
+    padding: 40px;
+    backdrop-filter: blur(10px);
+    text-align: center;
+    color: #e2e8f0;
+    display: none;
+    margin-bottom: 25px;
+  }
+
+  .loading.active {
+    display: block;
+    animation: fadeInUp 0.4s ease-out;
+  }
+
+  .spinner {
+    border: 4px solid rgba(96, 165, 250, 0.2);
+    border-top: 4px solid #60a5fa;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 15px;
+  }
+
+  .error {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.3) 100%);
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    color: #fecaca;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    display: none;
+    backdrop-filter: blur(10px);
+  }
+
+  .error.active {
+    display: block;
+    animation: fadeInUp 0.4s ease-out;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .header h1 {
+      font-size: 2em;
+    }
+
+    .charts-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .form-group {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .form-group select,
+    .btn-analyze {
+      width: 100%;
+    }
+
+    .stat-card {
+      padding: 20px;
+    }
+  }
+</style>
+
+<div class="container">
+  <div class="header">
+    <h1>🌡️ Dashboard Ambiental</h1>
+    <p>✨ Comparación de condiciones ambientales del vuelo vs. datos meteorológicos reales</p>
+  </div>
+
+  <div class="controls-card">
+    <div class="form-group">
+      <label for="archivo">Seleccionar archivo de vuelo:</label>
+      <select id="archivo">
+        <option value="">-- Seleccione un archivo CSV --</option>
+        {% for archivo in archivos %}
+        <option value="{{ archivo }}">{{ archivo }}</option>
+        {% endfor %}
+      </select>
+      <button id="btnAnalizar" class="btn-analyze">Analizar Datos</button>
     </div>
+  </div>
+
+  <div class="error" id="error"></div>
+  
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <p>Cargando y analizando datos...</p>
+  </div>
+
+  <div id="dashboard" style="display: none;">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-icon">🌡️</span>
+          <div>
+            <div class="stat-title">Temperatura Vuelo</div>
+          </div>
+        </div>
+        <div class="stat-value" id="tempPromedio">--</div>
+        <div class="stat-subtitle">Promedio del vuelo</div>
+        <div class="comparison">
+          <div class="comparison-item">
+            <div class="comparison-label">Mínima</div>
+            <div class="comparison-value" id="tempMin">--</div>
+          </div>
+          <div class="comparison-item">
+            <div class="comparison-label">Máxima</div>
+            <div class="comparison-value" id="tempMax">--</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-icon">🌍</span>
+          <div>
+            <div class="stat-title">Temperatura Meteorológica</div>
+          </div>
+        </div>
+        <div class="stat-value" id="tempMeteo">--</div>
+        <div class="stat-subtitle">Actual en Popayán</div>
+        <div class="comparison">
+          <div class="comparison-item">
+            <div class="comparison-label">Diferencia</div>
+            <div class="comparison-value" id="diffTemp">--</div>
+          </div>
+          <div class="comparison-item">
+            <div class="comparison-label">Variación</div>
+            <div class="comparison-value" id="diffTempPct">--</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-icon">📊</span>
+          <div>
+            <div class="stat-title">Presión Vuelo</div>
+          </div>
+        </div>
+        <div class="stat-value" id="presionPromedio">--</div>
+        <div class="stat-subtitle">Promedio del vuelo (Pa)</div>
+        <div class="comparison">
+          <div class="comparison-item">
+            <div class="comparison-label">Mínima</div>
+            <div class="comparison-value" id="presionMin">--</div>
+          </div>
+          <div class="comparison-item">
+            <div class="comparison-label">Máxima</div>
+            <div class="comparison-value" id="presionMax">--</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-icon">⛅</span>
+          <div>
+            <div class="stat-title">Presión Meteorológica</div>
+          </div>
+        </div>
+        <div class="stat-value" id="presionMeteo">--</div>
+        <div class="stat-subtitle">Actual en Popayán (Pa)</div>
+        <div class="comparison">
+          <div class="comparison-item">
+            <div class="comparison-label">Diferencia</div>
+            <div class="comparison-value" id="diffPresion">--</div>
+          </div>
+          <div class="comparison-item">
+            <div class="comparison-label">Variación</div>
+            <div class="comparison-value" id="diffPresionPct">--</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3 class="chart-title">📈 Temperatura durante el Vuelo</h3>
+        <canvas id="chartTemperatura"></canvas>
+      </div>
+
+      <div class="chart-card">
+        <h3 class="chart-title">📉 Presión Atmosférica durante el Vuelo</h3>
+        <canvas id="chartPresion"></canvas>
+      </div>
+
+      <div class="chart-card">
+        <h3 class="chart-title">🚀 Altitud vs Tiempo</h3>
+        <canvas id="chartAltitud"></canvas>
+      </div>
+
+      <div class="chart-card">
+        <h3 class="chart-title">⚖️ Comparación: Vuelo vs Meteorológico</h3>
+        <canvas id="chartComparacion"></canvas>
+      </div>
+    </div>
+  </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+  let charts = {};
+
+  document.getElementById('btnAnalizar').addEventListener('click', async () => {
+    const archivo = document.getElementById('archivo').value;
+    const archivoEncoded = encodeURIComponent(archivo);
+
+    const response = await fetch(`/dashboard-ambiental/api/datos/${archivoEncoded}`);
+
+    
+    if (!archivo) {
+      mostrarError('Por favor seleccione un archivo CSV');
+      return;
+    }
+
+    mostrarCargando(true);
+    ocultarError();
+    
+    try {
+      const response = await fetch(`/dashboard-ambiental/api/datos/${archivo}`);
+      
+      if (!response.ok) {
+        throw new Error('Error al cargar los datos');
+      }
+      
+      const datos = await response.json();
+      actualizarDashboard(datos);
+      
+    } catch (error) {
+      mostrarError('Error al procesar los datos: ' + error.message);
+    } finally {
+      mostrarCargando(false);
+    }
+  });
+
+  function actualizarDashboard(datos) {
+    const { csv, meteorologico, comparacion } = datos;
+    
+    document.getElementById('tempPromedio').textContent = csv.estadisticas.temp_promedio + '°C';
+    document.getElementById('tempMin').textContent = csv.estadisticas.temp_min + '°C';
+    document.getElementById('tempMax').textContent = csv.estadisticas.temp_max + '°C';
+    
+    document.getElementById('presionPromedio').textContent = formatNumber(csv.estadisticas.presion_promedio);
+    document.getElementById('presionMin').textContent = formatNumber(csv.estadisticas.presion_min);
+    document.getElementById('presionMax').textContent = formatNumber(csv.estadisticas.presion_max);
+    
+    if (meteorologico.exito) {
+      document.getElementById('tempMeteo').textContent = meteorologico.temperatura + '°C';
+      document.getElementById('presionMeteo').textContent = formatNumber(meteorologico.presion);
+      
+      if (comparacion.diff_temperatura !== null) {
+        const diffTemp = comparacion.diff_temperatura;
+        document.getElementById('diffTemp').textContent = (diffTemp > 0 ? '+' : '') + diffTemp + '°C';
+        document.getElementById('diffTemp').className = 'comparison-value ' + (diffTemp > 0 ? 'positive' : 'negative');
+        
+        document.getElementById('diffTempPct').textContent = (comparacion.diff_temperatura_porcentaje > 0 ? '+' : '') + 
+          comparacion.diff_temperatura_porcentaje + '%';
+        document.getElementById('diffTempPct').className = 'comparison-value ' + 
+          (comparacion.diff_temperatura_porcentaje > 0 ? 'positive' : 'negative');
+      }
+      
+      if (comparacion.diff_presion !== null) {
+        const diffPresion = comparacion.diff_presion;
+        document.getElementById('diffPresion').textContent = (diffPresion > 0 ? '+' : '') + formatNumber(diffPresion);
+        document.getElementById('diffPresion').className = 'comparison-value ' + (diffPresion > 0 ? 'positive' : 'negative');
+        
+        document.getElementById('diffPresionPct').textContent = (comparacion.diff_presion_porcentaje > 0 ? '+' : '') + 
+          comparacion.diff_presion_porcentaje + '%';
+        document.getElementById('diffPresionPct').className = 'comparison-value ' + 
+          (comparacion.diff_presion_porcentaje > 0 ? 'positive' : 'negative');
+      }
+    } else {
+      document.getElementById('tempMeteo').textContent = 'No disponible';
+      document.getElementById('presionMeteo').textContent = 'No disponible';
+    }
+    
+    actualizarGraficos(datos);
+    document.getElementById('dashboard').style.display = 'block';
+  }
+
+  function actualizarGraficos(datos) {
+    const { csv, meteorologico } = datos;
+    
+    Object.values(charts).forEach(chart => chart.destroy());
+    charts = {};
+    
+    const chartOptions = {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: { 
+          display: true,
+          labels: { color: '#e2e8f0' }
+        },
+        tooltip: { 
+          mode: 'index', 
+          intersect: false,
+          backgroundColor: 'rgba(15, 23, 42, 0.9)',
+          titleColor: '#e2e8f0',
+          bodyColor: '#cbd5e1',
+          borderColor: 'rgba(96, 165, 250, 0.5)',
+          borderWidth: 1
+        }
+      },
+      scales: {
+        x: { 
+          title: { display: true, color: '#cbd5e1' },
+          ticks: { color: '#94a3b8' },
+          grid: { color: 'rgba(96, 165, 250, 0.1)' }
+        },
+        y: { 
+          title: { display: true, color: '#cbd5e1' },
+          ticks: { color: '#94a3b8' },
+          grid: { color: 'rgba(96, 165, 250, 0.1)' }
+        }
+      }
+    };
+    
+    charts.temperatura = new Chart(document.getElementById('chartTemperatura'), {
+      type: 'line',
+      data: {
+        labels: csv.tiempos,
+        datasets: [{
+          label: 'Temperatura (°C)',
+          data: csv.temperaturas,
+          borderColor: '#ef4444',
+          backgroundColor: 'rgba(239, 68, 68, 0.2)',
+          tension: 0.4,
+          fill: true
+        }]
+      },
+      options: {
+        ...chartOptions,
+        scales: {
+          ...chartOptions.scales,
+          x: { ...chartOptions.scales.x, title: { display: true, text: 'Tiempo (s)', color: '#cbd5e1' } },
+          y: { ...chartOptions.scales.y, title: { display: true, text: 'Temperatura (°C)', color: '#cbd5e1' } }
+        }
+      }
+    });
+    
+    charts.presion = new Chart(document.getElementById('chartPresion'), {
+      type: 'line',
+      data: {
+        labels: csv.tiempos,
+        datasets: [{
+          label: 'Presión (Pa)',
+          data: csv.presiones,
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59, 130, 246, 0.2)',
+          tension: 0.4,
+          fill: true
+        }]
+      },
+      options: {
+        ...chartOptions,
+        scales: {
+          ...chartOptions.scales,
+          x: { ...chartOptions.scales.x, title: { display: true, text: 'Tiempo (s)', color: '#cbd5e1' } },
+          y: { ...chartOptions.scales.y, title: { display: true, text: 'Presión (Pa)', color: '#cbd5e1' } }
+        }
+      }
+    });
+    
+    charts.altitud = new Chart(document.getElementById('chartAltitud'), {
+      type: 'line',
+      data: {
+        labels: csv.tiempos,
+        datasets: [{
+          label: 'Altitud (m)',
+          data: csv.altitudes,
+          borderColor: '#10b981',
+          backgroundColor: 'rgba(16, 185, 129, 0.2)',
+          tension: 0.4,
+          fill: true
+        }]
+      },
+      options: {
+        ...chartOptions,
+        scales: {
+          ...chartOptions.scales,
+          x: { ...chartOptions.scales.x, title: { display: true, text: 'Tiempo (s)', color: '#cbd5e1' } },
+          y: { ...chartOptions.scales.y, title: { display: true, text: 'Altitud (m)', color: '#cbd5e1' } }
+        }
+      }
+    });
+    
+    const datosComparacion = {
+      labels: ['Temperatura (°C)', 'Presión (Pa/1000)'],
+      datasets: [{
+        label: 'Datos de Vuelo (Promedio)',
+        data: [
+          csv.estadisticas.temp_promedio,
+          csv.estadisticas.presion_promedio / 1000
+        ],
+        backgroundColor: 'rgba(96, 165, 250, 0.8)'
+      }]
+    };
+    
+    if (meteorologico.exito) {
+      datosComparacion.datasets.push({
+        label: 'Datos Meteorológicos',
+        data: [
+          meteorologico.temperatura,
+          meteorologico.presion / 1000
+        ],
+        backgroundColor: 'rgba(167, 139, 250, 0.8)'
+      });
+    }
+    
+    charts.comparacion = new Chart(document.getElementById('chartComparacion'), {
+      type: 'bar',
+      data: datosComparacion,
+      options: {
+        ...chartOptions,
+        scales: {
+          y: { 
+            beginAtZero: false,
+            title: { display: true, text: 'Valor', color: '#cbd5e1' },
+            ticks: { color: '#94a3b8' },
+            grid: { color: 'rgba(96, 165, 250, 0.1)' }
+          },
+          x: {
+            ticks: { color: '#94a3b8' },
+            grid: { color: 'rgba(96, 165, 250, 0.1)' }
+          }
+        }
+      }
+    });
+  }
+
+  function mostrarCargando(mostrar) {
+    document.getElementById('loading').className = mostrar ? 'loading active' : 'loading';
+    document.getElementById('btnAnalizar').disabled = mostrar;
+  }
+
+  function mostrarError(mensaje) {
+    const errorDiv = document.getElementById('error');
+    errorDiv.textContent = mensaje;
+    errorDiv.className = 'error active';
+  }
+
+  function ocultarError() {
+    document.getElementById('error').className = 'error';
+  }
+
+  function formatNumber(num) {
+    return new Intl.NumberFormat('es-CO', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(num);
+  }
+</script>
+
 {% endblock %}
