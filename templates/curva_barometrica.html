@@ -3,22 +3,257 @@
 {% block title %}Curva Barométrica{% endblock %}
 
 {% block content %}
-<div class="section-content">
-    <h2>📉 Curva Barométrica</h2>
-    <p class="section-description">Graficación de la curva de altitud vs. presión del vuelo y comparación con la
-        Ecuación Barométrica para verificar la consistencia del sensor.</p>
+<style>
+    body {
+        background: linear-gradient(15deg, rgba(194, 194, 196, 0.315), rgba(104, 120, 146, 0.201), rgba(127, 176, 210, 0.356)),
+                    url('/static/img/cohete.png') center/cover no-repeat fixed;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
 
-    <div class="content-box">
-        <h3>Sección en desarrollo</h3>
-        <p>Este espacio está listo para que agregues:</p>
-        <ul>
-            <li>Gráfico de altitud vs. presión del vuelo real</li>
-            <li>Superposición con curva teórica de Ecuación Barométrica</li>
-            <li>Cálculo de desviaciones y consistencia del sensor</li>
-            <li>Análisis de puntos críticos (despegue, apogeo, aterrizaje)</li>
-            <li>Exportación de datos en CSV</li>
-            <li>Métricas de precisión del sensor barométrico</li>
-        </ul>
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .header h1 {
+        font-size: 3em;
+        font-weight: 800;
+        color: #fff;
+        text-shadow: 0 0 40px rgba(0,0,0,0.8);
+    }
+
+    .controls-card {
+        background: rgba(30,41,59,0.8);
+        border: 1px solid rgba(96,165,250,0.3);
+        padding: 20px;
+        border-radius: 16px;
+        backdrop-filter: blur(10px);
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    select {
+        padding: 12px;
+        background: rgba(255,255,255,0.07);
+        border-radius: 8px;
+        border: 2px solid rgba(96,165,250,0.3);
+        color: #e2e8f0;
+        flex: 1;
+        min-width: 250px;
+    }
+
+    .btn-analyze {
+        padding: 12px 20px;
+        background: linear-gradient(135deg, #60a5fa, #a78bfa);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .error {
+        display: none;
+        padding: 15px;
+        background: rgba(239,68,68,0.3);
+        color: #fecaca;
+        border: 1px solid rgba(239,68,68,0.5);
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    .error.active { display:block; }
+
+    .loading {
+        display: none;
+        padding: 20px;
+        color: white;
+        text-align: center;
+    }
+
+    .loading.active { display:block; }
+
+    /* === NUEVO: tarjetas más pequeñas y en 2 columnas === */
+    .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+        gap: 22px;
+        margin-top: 25px;
+    }
+
+    .chart-card {
+        background: rgba(30,41,59,0.85);
+        padding: 18px;
+        border-radius: 14px;
+        border: 1px solid rgba(96,165,250,0.2);
+        backdrop-filter: blur(10px);
+    }
+
+    .chart-title {
+        color: white;
+        font-weight: 700;
+        margin-bottom: 10px;
+        font-size: 1rem;
+    }
+</style>
+
+<div class="container">
+
+  <div class="header">
+    <h1>📉 Curva Barométrica</h1>
+    <p style="color:white;font-weight:600">Comparación: presión real vs presión teórica</p>
+  </div>
+
+  <div class="controls-card">
+    <div class="form-group">
+      <label>Archivo CSV</label>
+      <select id="archivo">
+        <option value="">-- Seleccione un archivo --</option>
+        {% for archivo in archivos %}
+        <option value="{{ archivo }}">{{ archivo }}</option>
+        {% endfor %}
+      </select>
+
+      <button class="btn-analyze" id="btnAnalizar">Generar</button>
     </div>
+  </div>
+
+  <div id="error" class="error"></div>
+  <div id="loading" class="loading">⏳ Cargando datos...</div>
+
+  <!-- === NUEVO GRID DE 4 GRÁFICAS === -->
+  <div class="charts-grid">
+
+    <div class="chart-card">
+      <div class="chart-title">Altitud vs Presión — Real vs Teórica</div>
+      <canvas id="chartAltPres"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">Presión Real (Solo)</div>
+      <canvas id="chartReal"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">Presión Teórica (Solo)</div>
+      <canvas id="chartTeo"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">Residuals (Real − Teórica)</div>
+      <canvas id="chartResiduals"></canvas>
+    </div>
+
+  </div>
+
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+let charts = {};
+
+function error(msg){
+  const e = document.getElementById('error');
+  e.textContent = msg;
+  e.classList.add('active');
+}
+
+function noError(){
+  document.getElementById('error').classList.remove('active');
+}
+
+document.getElementById('btnAnalizar').addEventListener('click', async () => {
+  const archivo = document.getElementById('archivo').value;
+
+  if(!archivo){
+    return error("Seleccione un archivo CSV.");
+  }
+
+  noError();
+  document.getElementById('loading').classList.add('active');
+
+  const resp = await fetch(`/curva-barometrica/api/datos/${encodeURIComponent(archivo)}`);
+
+  if(!resp.ok){
+    error("No se pudo cargar el archivo.");
+    document.getElementById('loading').classList.remove('active');
+    return;
+  }
+
+  const data = await resp.json();
+  document.getElementById('loading').classList.remove('active');
+
+  const alt = data.altitudes;
+  const real = data.presiones_reales;
+  const teo = data.presiones_teoricas;
+  const residuals = real.map((v, i) => v - teo[i]);
+
+  // Destruir charts anteriores
+  Object.values(charts).forEach(ch => ch.destroy());
+  charts = {};
+
+  // === 1) Gráfica combinada ===
+  charts.combinada = new Chart(document.getElementById('chartAltPres'), {
+    type: 'line',
+    data: {
+      labels: alt,
+      datasets: [
+        { label: "Real (Pa)", data: real, borderColor: "#60a5fa", pointRadius: 2 },
+        { label: "Teórica (Pa)", data: teo, borderColor: "#a78bfa", borderWidth: 2 }
+      ]
+    }
+  });
+
+  // === 2) Real solamente ===
+  charts.real = new Chart(document.getElementById('chartReal'), {
+    type: 'line',
+    data: {
+      labels: alt,
+      datasets: [
+        { label: "Presión Real (Pa)", data: real, borderColor: "#3b82f6", pointRadius: 2 }
+      ]
+    }
+  });
+
+  // === 3) Teórica solamente ===
+  charts.teo = new Chart(document.getElementById('chartTeo'), {
+    type: 'line',
+    data: {
+      labels: alt,
+      datasets: [
+        { label: "Presión Teórica (Pa)", data: teo, borderColor: "#a78bfa", pointRadius: 2 }
+      ]
+    }
+  });
+
+  // === 4) Residuales ===
+  charts.residuals = new Chart(document.getElementById('chartResiduals'), {
+    type: 'bar',
+    data: {
+      labels: alt,
+      datasets: [{
+        label: "Residual (Pa)",
+        data: residuals,
+        backgroundColor: residuals.map(v => v >= 0 ? "rgba(16,185,129,0.7)" : "rgba(239,68,68,0.7)")
+      }]
+    }
+  });
+
+});
+</script>
+
 {% endblock %}
