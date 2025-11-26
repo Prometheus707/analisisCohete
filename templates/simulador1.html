@@ -6,17 +6,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador Avanzado de Cohetes</title>
+    <title>Simulador Avanzado de Cohete A presión de agua</title>
     <style>
         /* ================= VARIABLES Y ESTILOS GENERALES ================= */
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
+         body {
+        background: linear-gradient(15deg, rgba(194, 194, 196, 0.315) 0%, rgba(104, 120, 146, 0.201) 50%, rgba(127, 176, 210, 0.356) 100%),
+                    url('/static/img/cohete.png') center/cover no-repeat fixed;
+        min-height: 100vh;
+    }
 
         .main-container { max-width: 1400px; margin: 0 auto; }
         .header { text-align: center; color: white; margin-bottom: 30px; }
@@ -36,6 +35,10 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
+        .titul{
+        font-size: 20px;
+        color: #0a1929 !important;
+        }
         .control-section { margin-bottom: 25px; }
         .control-section h3 { color: #333; margin-bottom: 15px; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
 
@@ -190,7 +193,7 @@
     <div class="main-container">
         <div class="header">
             <h1>🚀 Simulador Avanzado de Cohetes de Agua</h1>
-            <p>Sistema de Lanzamiento con Física Realista</p>
+            <p class="titul">Sistema de Lanzamiento con Física Realista</p>
         </div>
 
         <div class="content-grid">

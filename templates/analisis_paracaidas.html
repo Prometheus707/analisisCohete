@@ -31,7 +31,7 @@
     <!-- Gráfico -->
     <div class="content-box">
         <h3>📊 Gráficas de Presión</h3>
-        <p>Presión atmosférica y tasa de cambio para detectar apertura del paracaídas.</p>
+        <p class="parrafo" >Presión atmosférica y tasa de cambio para detectar apertura del paracaídas.</p>
         <div id="grafico-container">{{ grafico|safe }}</div>
     </div>
 
@@ -73,17 +73,17 @@
         <div style="display: grid; gap: 12px;">
             <div style="border-left: 4px solid #2196F3; padding-left: 12px;">
                 <h4 style="color: #2196F3; margin: 0;">📊 Presión Atmosférica</h4>
-                <p style="margin: 5px 0 0 0;">Muestra cómo cambia la presión durante el vuelo. Baja al subir, sube al
+                <p class="parrafo" style="margin: 5px 0 0 0;">Muestra cómo cambia la presión durante el vuelo. Baja al subir, sube al
                     bajar.</p>
             </div>
             <div style="border-left: 4px solid #FF9800; padding-left: 12px;">
                 <h4 style="color: #FF9800; margin: 0;">📈 Tasa de Cambio</h4>
-                <p style="margin: 5px 0 0 0;">Derivada de la presión (Pa/s). Muestra qué tan rápido cambia durante el
+                <p class="parrafo" style="margin: 5px 0 0 0;">Derivada de la presión (Pa/s). Muestra qué tan rápido cambia durante el
                     descenso.</p>
             </div>
             <div style="border-left: 4px solid #F44336; padding-left: 12px;">
                 <h4 style="color: #F44336; margin: 0;">🪂 Apertura Pasiva</h4>
-                <p style="margin: 5px 0 0 0;">El paracaídas está en la punta del cohete y se abre naturalmente al inicio
+                <p class="parrafo" style="margin: 5px 0 0 0;">El paracaídas está en la punta del cohete y se abre naturalmente al inicio
                     del descenso por la fuerza del aire.</p>
             </div>
         </div>
@@ -101,6 +101,15 @@
 
     .content-box h3 {
         margin-top: 0;
+    }
+     body {
+        background: linear-gradient(15deg, rgba(194, 194, 196, 0.315) 0%, rgba(104, 120, 146, 0.201) 50%, rgba(127, 176, 210, 0.356) 100%),
+                    url('/static/img/cohete.png') center/cover no-repeat fixed;
+        min-height: 100vh;
+    }
+    .parrafo {
+        font-size: 18px !important;
+        color: #000000;
     }
 </style>
 {% endblock %}

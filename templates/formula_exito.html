@@ -11,267 +11,321 @@
         box-sizing: border-box;
     }
 
-    .section-content {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    body {
+        background: linear-gradient(15deg, rgba(194, 194, 196, 0.315) 0%, rgba(104, 120, 146, 0.201) 50%, rgba(127, 176, 210, 0.356) 100%),
+                    url('/static/img/cohete.png') center/cover no-repeat fixed;
         min-height: 100vh;
-        padding: 40px 20px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .section-content {
+        min-height: 100vh;
+        padding: 60px 20px;
+        background: rgba(0, 0, 0, 0.02);
     }
 
     .header-section {
         text-align: center;
-        color: white;
-        margin-bottom: 50px;
+        margin-bottom: 60px;
+        animation: fadeInDown 0.8s ease;
     }
 
     .header-section h1 {
-        font-size: 42px;
-        font-weight: 700;
-        margin-bottom: 10px;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        font-size: 48px;
+        font-weight: 800;
+        margin-bottom: 15px;
+        background: linear-gradient(135deg, rgb(15, 50, 100) 0%, rgb(30, 80, 140) 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
     .header-section p {
-        font-size: 16px;
-        opacity: 0.95;
-        max-width: 600px;
+        font-size: 18px;
+        color: rgb(40, 70, 110);
+        font-weight: 500;
+        max-width: 700px;
         margin: 0 auto;
+        opacity: 0.9;
+    }
+    .form{
+        color: black !important;
     }
 
     .champion-card {
-        background: white;
-        border-radius: 18px;
-        padding: 40px;
-        margin-bottom: 40px;
-        box-shadow: 0 12px 40px rgba(0,0,0,0.15);
-        border-top: 6px solid #ffc107;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 24px;
+        padding: 50px;
+        margin-bottom: 50px;
+        box-shadow: 0 20px 60px rgba(15, 50, 100, 0.2);
         max-width: 1400px;
         margin-left: auto;
         margin-right: auto;
+        border: 2px solid rgba(30, 80, 140, 0.15);
         position: relative;
         overflow: hidden;
+        animation: fadeInUp 0.8s ease 0.1s backwards;
     }
 
     .champion-card::before {
-        content: "🏆";
+        content: "🚀";
         position: absolute;
-        font-size: 150px;
-        opacity: 0.05;
-        right: -30px;
-        top: -40px;
+        font-size: 180px;
+        opacity: 0.08;
+        right: -40px;
+        top: -50px;
         z-index: 0;
     }
 
     .champion-header {
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        margin-bottom: 35px;
-        padding-bottom: 25px;
-        border-bottom: 3px solid #ffc107;
+        align-items: flex-start;
+        margin-bottom: 40px;
+        padding-bottom: 30px;
+        border-bottom: 3px solid rgb(30, 80, 140);
         position: relative;
         z-index: 1;
+        flex-wrap: wrap;
+        gap: 20px;
     }
 
     .champion-title {
-        font-size: 32px;
-        font-weight: 700;
-        color: #2c3e50;
+        font-size: 36px;
+        font-weight: 800;
+        color: rgb(15, 50, 100);
+    }
+
+    .champion-file {
+        color: rgb(100, 120, 150);
+        font-size: 14px;
+        margin-top: 8px;
     }
 
     .champion-badge {
-        background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+        background: linear-gradient(135deg, rgb(30, 120, 200) 0%, rgb(15, 80, 160) 100%);
         color: white;
-        padding: 12px 24px;
-        border-radius: 25px;
-        font-weight: 600;
-        font-size: 16px;
-        box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+        padding: 16px 32px;
+        border-radius: 30px;
+        font-weight: 700;
+        font-size: 18px;
+        box-shadow: 0 8px 25px rgba(30, 120, 200, 0.3);
+        white-space: nowrap;
     }
 
     .champion-metrics {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 20px;
+        gap: 25px;
         position: relative;
         z-index: 1;
     }
 
     .champion-metric {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        padding: 25px;
-        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(30, 120, 200, 0.1) 0%, rgba(15, 80, 160, 0.1) 100%);
+        padding: 30px;
+        border-radius: 16px;
         text-align: center;
-        border-left: 4px solid #667eea;
+        border-left: 5px solid rgb(30, 120, 200);
+        transition: transform 0.3s ease;
+    }
+
+    .champion-metric:hover {
+        transform: translateY(-5px);
     }
 
     .champion-metric-label {
         font-size: 12px;
-        color: #666;
+        color: rgb(60, 90, 140);
         text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 10px;
-        font-weight: 600;
+        letter-spacing: 1.5px;
+        margin-bottom: 12px;
+        font-weight: 700;
     }
 
     .champion-metric-value {
-        font-size: 32px;
-        font-weight: 700;
-        color: #667eea;
-        margin-bottom: 5px;
+        font-size: 36px;
+        font-weight: 800;
+        color: rgb(30, 120, 200);
+        margin-bottom: 8px;
     }
 
     .champion-metric-unit {
-        font-size: 13px;
-        color: #999;
+        font-size: 14px;
+        color: rgb(80, 110, 150);
+        font-weight: 600;
     }
 
     .launches-container {
         max-width: 1400px;
         margin: 0 auto;
+        animation: fadeInUp 0.8s ease 0.2s backwards;
     }
 
     .section-title {
-        color: white;
-        font-size: 28px;
-        font-weight: 700;
-        margin-bottom: 30px;
+        color: rgb(15, 50, 100);
+        font-size: 32px;
+        font-weight: 800;
+        margin-bottom: 40px;
         text-align: center;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
 
     .launches-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-        gap: 25px;
-        margin-bottom: 40px;
+        gap: 28px;
+        margin-bottom: 50px;
     }
 
     .launch-card {
-        background: white;
-        border-radius: 15px;
-        padding: 25px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        border-top: 5px solid #667eea;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 18px;
+        padding: 28px;
+        box-shadow: 0 12px 40px rgba(15, 50, 100, 0.15);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 2px solid rgba(30, 120, 200, 0.1);
+        border-left: 5px solid rgb(30, 120, 200);
     }
 
     .launch-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 36px rgba(0,0,0,0.15);
+        transform: translateY(-12px);
+        box-shadow: 0 20px 50px rgba(15, 50, 100, 0.2);
+        border-color: rgba(30, 120, 200, 0.3);
     }
 
     .launch-card.best {
-        border-top: 5px solid #ffc107;
-        box-shadow: 0 8px 24px rgba(255, 193, 7, 0.3);
+        border-left: 5px solid rgb(255, 180, 0);
+        box-shadow: 0 12px 40px rgba(255, 180, 0, 0.2);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 250, 240, 0.98) 100%);
+    }
+
+    .launch-card.best:hover {
+        box-shadow: 0 20px 50px rgba(255, 180, 0, 0.25);
     }
 
     .launch-name {
-        font-size: 16px;
+        font-size: 17px;
         font-weight: 700;
-        color: #2c3e50;
-        margin-bottom: 20px;
+        color: rgb(15, 50, 100);
+        margin-bottom: 24px;
         word-break: break-word;
+        padding-bottom: 16px;
+        border-bottom: 2px solid rgba(30, 120, 200, 0.1);
     }
 
     .launch-stat {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 12px 0;
-        border-bottom: 1px solid #f0f0f0;
+        padding: 14px 0;
+        border-bottom: 1px solid rgba(30, 120, 200, 0.08);
     }
 
-    .launch-stat:last-child {
+    .launch-stat:last-of-type {
         border-bottom: none;
+        padding-bottom: 0;
     }
 
     .stat-label {
-        font-size: 12px;
-        color: #999;
+        font-size: 11px;
+        color: rgb(80, 110, 150);
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.8px;
+        font-weight: 700;
     }
 
     .stat-value {
-        font-size: 18px;
-        font-weight: 700;
-        color: #667eea;
+        font-size: 19px;
+        font-weight: 800;
+        color: rgb(30, 120, 200);
     }
 
     .stat-unit {
-        font-size: 11px;
-        color: #bbb;
-        margin-left: 4px;
+        font-size: 12px;
+        color: rgb(110, 140, 170);
+        margin-left: 5px;
+        font-weight: 600;
     }
 
     .ranking-badge {
         display: inline-block;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, rgb(30, 120, 200) 0%, rgb(15, 80, 160) 100%);
         color: white;
-        padding: 4px 12px;
-        border-radius: 12px;
-        font-size: 11px;
-        font-weight: 600;
-        margin-top: 15px;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        margin-top: 16px;
     }
 
     .ranking-badge.first {
-        background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+        background: linear-gradient(135deg, rgb(255, 180, 0) 0%, rgb(255, 140, 0) 100%);
     }
 
     .ranking-badge.second {
-        background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
-        color: #333;
+        background: linear-gradient(135deg, rgb(180, 180, 190) 0%, rgb(220, 220, 230) 100%);
+        color: rgb(30, 50, 80);
     }
 
     .ranking-badge.third {
-        background: linear-gradient(135deg, #cd7f32 0%, #d4a373 100%);
+        background: linear-gradient(135deg, rgb(200, 130, 90) 0%, rgb(180, 110, 70) 100%);
     }
 
     .comparative-section {
-        background: white;
-        border-radius: 18px;
-        padding: 35px;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 24px;
+        padding: 45px;
+        box-shadow: 0 20px 60px rgba(15, 50, 100, 0.15);
         margin-bottom: 30px;
+        border: 2px solid rgba(30, 80, 140, 0.15);
+        animation: fadeInUp 0.8s ease 0.3s backwards;
     }
 
     .comparative-title {
-        font-size: 24px;
-        font-weight: 700;
-        color: #2c3e50;
-        margin-bottom: 25px;
+        font-size: 28px;
+        font-weight: 800;
+        color: rgb(15, 50, 100);
+        margin-bottom: 35px;
         text-align: center;
     }
 
     .metric-comparison {
-        margin-bottom: 30px;
+        margin-bottom: 40px;
+    }
+
+    .metric-comparison:last-child {
+        margin-bottom: 0;
     }
 
     .metric-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 15px;
+        margin-bottom: 20px;
     }
 
     .metric-name {
-        font-weight: 600;
-        color: #2c3e50;
-        font-size: 14px;
+        font-weight: 700;
+        color: rgb(15, 50, 100);
+        font-size: 15px;
     }
 
     .metric-max {
-        font-size: 12px;
-        color: #999;
+        font-size: 13px;
+        color: rgb(80, 110, 150);
+        font-weight: 600;
     }
 
     .bar-container {
-        background: #e9ecef;
-        height: 30px;
-        border-radius: 8px;
+        background: rgba(30, 120, 200, 0.08);
+        height: 36px;
+        border-radius: 12px;
         overflow: hidden;
-        margin-bottom: 8px;
+        margin-bottom: 12px;
+        border: 1px solid rgba(30, 120, 200, 0.15);
     }
 
     .bar-fill {
@@ -279,79 +333,145 @@
         display: flex;
         align-items: center;
         justify-content: flex-end;
-        padding-right: 12px;
+        padding-right: 14px;
         color: white;
-        font-weight: 600;
-        font-size: 12px;
-        border-radius: 8px;
-        transition: width 0.5s ease;
+        font-weight: 700;
+        font-size: 13px;
+        border-radius: 12px;
+        transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .bar-apogeo {
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(90deg, rgb(30, 120, 200) 0%, rgb(15, 80, 160) 100%);
     }
 
     .bar-eficiencia {
-        background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+        background: linear-gradient(90deg, rgb(80, 140, 220) 0%, rgb(30, 100, 180) 100%);
     }
 
     .bar-presion {
-        background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+        background: linear-gradient(90deg, rgb(40, 130, 210) 0%, rgb(20, 90, 170) 100%);
     }
 
     .bar-agua {
-        background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+        background: linear-gradient(90deg, rgb(50, 140, 200) 0%, rgb(30, 110, 170) 100%);
     }
 
     .launch-item {
-        background: #f8f9fa;
-        padding: 12px 15px;
-        border-radius: 6px;
-        margin-bottom: 8px;
+        background: rgba(30, 120, 200, 0.08);
+        padding: 12px 16px;
+        border-radius: 10px;
+        margin-bottom: 10px;
         font-size: 13px;
-        border-left: 3px solid #667eea;
+        border-left: 4px solid rgb(30, 120, 200);
+        color: rgb(40, 70, 110);
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .launch-item:hover {
+        background: rgba(30, 120, 200, 0.12);
+        transform: translateX(4px);
     }
 
     .launch-item.best {
-        border-left: 3px solid #ffc107;
-        background: #fffbf0;
+        border-left: 4px solid rgb(255, 180, 0);
+        background: rgba(255, 180, 0, 0.1);
+        color: rgb(15, 50, 100);
+    }
+
+    .launch-item.best:hover {
+        background: rgba(255, 180, 0, 0.15);
     }
 
     .no-data {
-        background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-        color: #92360f;
-        padding: 40px;
-        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(255, 180, 0, 0.15) 0%, rgba(255, 140, 0, 0.1) 100%);
+        color: rgb(100, 70, 20);
+        padding: 50px;
+        border-radius: 20px;
         text-align: center;
-        font-size: 18px;
+        font-size: 20px;
         max-width: 1400px;
         margin: 0 auto;
+        border: 2px solid rgba(255, 180, 0, 0.3);
+        font-weight: 600;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     @media (max-width: 768px) {
-        .champion-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 15px;
+        .section-content {
+            padding: 40px 15px;
         }
 
         .header-section h1 {
-            font-size: 28px;
+            font-size: 32px;
+        }
+
+        .header-section p {
+            font-size: 16px;
+        }
+
+        .champion-card {
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        .champion-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .champion-badge {
+            align-self: flex-start;
         }
 
         .launches-grid {
             grid-template-columns: 1fr;
+            gap: 20px;
         }
 
-        .champion-card {
-            padding: 25px;
+        .comparative-section {
+            padding: 28px;
+        }
+
+        .champion-metrics {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .metric-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
         }
     }
+ 
 </style>
 
 <div class="section-content">
     <div class="header-section">
-        <h1>🚀 Fórmula del Éxito</h1>
+        <h1 class="form">🚀 Fórmula del Éxito</h1>
         <p>Análisis de cuál combinación de presión y agua produjo el mejor apogeo real</p>
     </div>
 
@@ -362,7 +482,7 @@
             <div class="champion-header">
                 <div>
                     <div class="champion-title">🏆 Mejor Lanzamiento</div>
-                    <div style="color: #999; font-size: 13px; margin-top: 5px;">{{ mejor.archivo }}</div>
+                    <div class="champion-file">{{ mejor.archivo }}</div>
                 </div>
                 <div class="champion-badge">
                     Apogeo: {{ mejor.apogeo }} m
@@ -371,17 +491,17 @@
 
             <div class="champion-metrics">
                 <div class="champion-metric">
-                    <div class="champion-metric-label">Apogeo alcanzado</div>
+                    <div class="champion-metric-label">Apogeo Alcanzado</div>
                     <div class="champion-metric-value">{{ mejor.apogeo }}</div>
                     <div class="champion-metric-unit">metros</div>
                 </div>
                 <div class="champion-metric">
-                    <div class="champion-metric-label">Presión utilizada</div>
+                    <div class="champion-metric-label">Presión Utilizada</div>
                     <div class="champion-metric-value">{{ mejor.presion }}</div>
                     <div class="champion-metric-unit">PSI</div>
                 </div>
                 <div class="champion-metric">
-                    <div class="champion-metric-label">Volumen de agua</div>
+                    <div class="champion-metric-label">Volumen de Agua</div>
                     <div class="champion-metric-value">{{ mejor.agua }}</div>
                     <div class="champion-metric-unit">litros</div>
                 </div>
@@ -391,14 +511,14 @@
                     <div class="champion-metric-unit">m/L</div>
                 </div>
                 <div class="champion-metric">
-                    <div class="champion-metric-label">Tiempo en apogeo</div>
+                    <div class="champion-metric-label">Tiempo en Apogeo</div>
                     <div class="champion-metric-value">{{ mejor.tiempo_apogeo }}</div>
                     <div class="champion-metric-unit">segundos</div>
                 </div>
             </div>
         </div>
 
-        <!-- Sección de comparación de todos los lanzamientos -->
+        <!-- Sección de todos los lanzamientos -->
         <div class="launches-container">
             <h2 class="section-title">📊 Todos los Lanzamientos</h2>
 
@@ -431,7 +551,7 @@
                         </div>
 
                         <div class="launch-stat">
-                            <span class="stat-label">Tiempo apogeo</span>
+                            <span class="stat-label">Tiempo Apogeo</span>
                             <span class="stat-value">{{ v.tiempo_apogeo }}<span class="stat-unit">s</span></span>
                         </div>
 
@@ -461,7 +581,7 @@
                         <span class="metric-max">Máx: {% set max_apogeo = resultados | map(attribute='apogeo') | max %}{{ max_apogeo }}</span>
                     </div>
                     {% for v in resultados | sort(attribute='apogeo', reverse=true) %}
-                        <div style="margin-bottom: 10px;">
+                        <div style="margin-bottom: 12px;">
                             <div class="bar-container">
                                 <div class="bar-fill bar-apogeo" style="width: {{ (v.apogeo / max_apogeo * 100) }}%">
                                     {{ v.apogeo }}m
@@ -481,7 +601,7 @@
                         <span class="metric-max">Máx: {% set max_eficiencia = resultados | map(attribute='eficiencia') | max %}{{ max_eficiencia }}</span>
                     </div>
                     {% for v in resultados | sort(attribute='eficiencia', reverse=true) %}
-                        <div style="margin-bottom: 10px;">
+                        <div style="margin-bottom: 12px;">
                             <div class="bar-container">
                                 <div class="bar-fill bar-eficiencia" style="width: {{ (v.eficiencia / max_eficiencia * 100) }}%">
                                     {{ v.eficiencia }}
@@ -501,7 +621,7 @@
                         <span class="metric-max">Máx: {% set max_presion = resultados | map(attribute='presion') | max %}{{ max_presion }}</span>
                     </div>
                     {% for v in resultados | sort(attribute='presion', reverse=true) %}
-                        <div style="margin-bottom: 10px;">
+                        <div style="margin-bottom: 12px;">
                             <div class="bar-container">
                                 <div class="bar-fill bar-presion" style="width: {{ (v.presion / max_presion * 100) }}%">
                                     {{ v.presion }}
@@ -521,7 +641,7 @@
                         <span class="metric-max">Máx: {% set max_agua = resultados | map(attribute='agua') | max %}{{ max_agua }}</span>
                     </div>
                     {% for v in resultados | sort(attribute='agua', reverse=true) %}
-                        <div style="margin-bottom: 10px;">
+                        <div style="margin-bottom: 12px;">
                             <div class="bar-container">
                                 <div class="bar-fill bar-agua" style="width: {{ (v.agua / max_agua * 100) }}%">
                                     {{ v.agua }}L
