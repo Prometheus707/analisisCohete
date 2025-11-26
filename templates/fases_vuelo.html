@@ -2,6 +2,29 @@
 {% block title %}Fases del Vuelo{% endblock %}
 
 {% block content %}
+
+<style>
+    body {
+        background: linear-gradient(15deg, rgba(194, 194, 196, 0.315) 0%, rgba(104, 120, 146, 0.201) 50%, rgba(127, 176, 210, 0.356) 100%),
+                    url('/static/img/cohete.png') center/cover no-repeat fixed;
+        min-height: 100vh;
+    }
+
+    #grafico-container {
+        margin-top: 15px;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .content-box h3 {
+        margin-top: 0;
+    }
+    .parrafo {
+        font-size: 14px;
+        color: #000000;
+    }
+</style>
+
 <div class="section-content">
     <h2>🚀 Fases del Vuelo</h2>
     <p class="section-description">Análisis de fases del vuelo con datos de altitud del cohete.</p>
@@ -31,7 +54,7 @@
     <!-- Gráfico Interactivo -->
     <div class="content-box">
         <h3>📊 Gráfico de Fases del Vuelo</h3>
-        <p>Gráfico interactivo: zoom, hover para ver detalles.</p>
+        <p class="parrafo">Gráfico interactivo: zoom, hover para ver detalles.</p>
         <div id="grafico-container">{{ grafico|safe }}</div>
     </div>
 
@@ -77,31 +100,22 @@
         <div style="display: grid; gap: 12px;">
             <div style="border-left: 4px solid #1E88E5; padding-left: 12px;">
                 <h4 style="color: #1E88E5; margin: 0;">🔵 Ascenso</h4>
-                <p style="margin: 5px 0 0 0;">Desde despegue hasta apogeo. El cohete gana altitud por impulso del motor.
+                <p class="parrafo" style="margin: 5px 0 0 0;">Desde despegue hasta apogeo. El cohete gana altitud por impulso del motor.
                 </p>
             </div>
             <div style="border-left: 4px solid #FFA726; padding-left: 12px;">
                 <h4 style="color: #FFA726; margin: 0;">🟠 Descenso</h4>
-                <p style="margin: 5px 0 0 0;">Desde apogeo hasta aterrizaje. Descenso con paracaídas.</p>
+                <p class="parrafo" style="margin: 5px 0 0 0;">Desde apogeo hasta aterrizaje. Descenso con paracaídas.</p>
             </div>
             <div style="border-left: 4px solid #F44336; padding-left: 12px;">
                 <h4 style="color: #F44336; margin: 0;">⭐ Apogeo</h4>
-                <p style="margin: 5px 0 0 0;">Punto de máxima altitud. Velocidad vertical = 0.</p>
-            </div>
+                <!-- <p class="parrafo" style="margin: 5px 0 0 0;">Punto de máxima altitud. Velocidad vertical = 0.</p> -->
+            
+                <p class="parrafo" style="margin: 5px 0 0 0;">Punto de máxima altitud. Velocidad vertical.</p>
+</div>
         </div>
     </div>
     {% endif %}
 </div>
 
-<style>
-    #grafico-container {
-        margin-top: 15px;
-        border-radius: 8px;
-        overflow: hidden;
-    }
-
-    .content-box h3 {
-        margin-top: 0;
-    }
-</style>
 {% endblock %}

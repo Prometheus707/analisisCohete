@@ -52,7 +52,7 @@
             font-size: 2.5em;
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 50%, var(--accent-color) 100%);
             -webkit-background-clip: text;
-            -webkit-text-fill-color:aqua;
+            -webkit-text-fill-color: aqua;
             background-clip: text;
             font-weight: 900;
             letter-spacing: -2px;
@@ -157,23 +157,242 @@
             transform: rotate(-45deg) translate(7px, -7px);
         }
 
-        /* Footer */
+        /* Footer Mejorado */
         .footer {
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.9) 100%);
-            border-top: 2px solid rgba(96, 165, 250, 0.2);
-            text-align: center;
-            padding: 30px 20px;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.95) 100%);
+            border-top: 3px solid rgba(96, 165, 250, 0.3);
             margin-top: 80px;
-            color: #cbd5e1;
-            font-size: 0.95em;
+            padding: 60px 20px 30px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .footer p {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 50%, var(--accent-color) 100%);
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary-color), var(--secondary-color), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .footer-title {
+            font-size: 2.2em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 50%, #fbbf24 100%);
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
             background-clip: text;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        .footer-subtitle {
+            color: #94a3b8;
+            font-size: 1.1em;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        .team-section {
+            margin-bottom: 50px;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .team-photo-container {
+            background: rgba(30, 41, 59, 0.6);
+            border-radius: 25px;
+            padding: 40px;
+            border: 2px solid rgba(96, 165, 250, 0.2);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .team-photo-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(96, 165, 250, 0.08) 0%, transparent 70%);
+            animation: rotate-glow 10s linear infinite;
+        }
+
+        @keyframes rotate-glow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .team-photo-container:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 25px 50px rgba(96, 165, 250, 0.4);
+            transform: translateY(-5px);
+        }
+
+        .team-photo-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+
+        .group-photo-placeholder {
+            width: 100%;
+            max-width: 800px;
+            height: 400px;
+            margin: 0 auto 30px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.3), rgba(167, 139, 250, 0.3));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5em;
+            border: 3px solid rgba(96, 165, 250, 0.3);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .group-photo-placeholder::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.8s ease;
+        }
+
+        .team-photo-container:hover .group-photo-placeholder::before {
+            left: 100%;
+        }
+
+        .group-photo-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 17px;
+        }
+
+        .team-members-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px 25px;
+            margin-top: 25px;
+        }
+
+        .member-item {
+            background: rgba(15, 23, 42, 0.5);
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .member-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(96, 165, 250, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .member-item:hover::before {
+            left: 100%;
+        }
+
+        .member-item:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(96, 165, 250, 0.3);
+        }
+
+        .member-name {
+            font-size: 0.95em;
             font-weight: 600;
+            color: #e2e8f0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .member-icon {
+            margin-right: 8px;
+            font-size: 1.1em;
+        }
+
+        .footer-info {
+            text-align: center;
+            padding: 30px 20px 0;
+            border-top: 1px solid rgba(96, 165, 250, 0.15);
+        }
+
+        .project-info {
+            margin-bottom: 20px;
+        }
+
+        .project-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #e2e8f0;
+            margin-bottom: 10px;
+        }
+
+        .project-description {
+            color: #94a3b8;
+            font-size: 20px;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-bottom {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(96, 165, 250, 0.1);
+        }
+
+        .footer-bottom p {
+            color: #64748b;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .university-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(96, 165, 250, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 0.9em;
+            margin-top: 10px;
         }
 
         /* Animaciones */
@@ -229,6 +448,31 @@
                 height: auto;
                 justify-content: space-between;
             }
+
+            .footer-title {
+                font-size: 1.8em;
+            }
+
+            .group-photo-placeholder {
+                height: 300px;
+                font-size: 4em;
+            }
+
+            .team-photo-container {
+                padding: 30px 20px;
+            }
+
+            .team-members-list {
+                gap: 12px 15px;
+            }
+
+            .member-item {
+                padding: 10px 15px;
+            }
+
+            .member-name {
+                font-size: 0.9em;
+            }
         }
 
         @media (max-width: 480px) {
@@ -248,6 +492,37 @@
             .nav-link {
                 font-size: 0.9em;
                 padding: 14px 15px;
+            }
+
+            .footer {
+                padding: 40px 15px 20px;
+            }
+
+            .footer-title {
+                font-size: 1.5em;
+            }
+
+            .group-photo-placeholder {
+                height: 250px;
+                font-size: 3em;
+            }
+
+            .team-photo-container {
+                padding: 25px 15px;
+            }
+
+            .team-members-list {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .member-item {
+                width: 100%;
+                text-align: center;
+            }
+
+            .member-name {
+                font-size: 0.85em;
             }
         }
     </style>
@@ -270,9 +545,6 @@
                 <li><a href="{{ url_for('formula_exito.index') }}" class="nav-link">Fórmula Éxito</a></li>
                 <li><a href="{{ url_for('prediccion.index') }}" class="nav-link">Predicción</a></li>
                 <li><a href="{{ url_for('simulador1.index') }}" class="nav-link">Simulador</a></li>
-
-                
-
             </ul>
             <div class="hamburger" id="hamburger">
                 <span></span>
@@ -287,8 +559,67 @@
         {% block content %}{% endblock %}
     </main>
 
+    <!-- Footer Mejorado -->
     <footer class="footer">
-        <p>&copy; 2025 Análisis de Cohete - Proyecto Universitario</p>
+        <div class="footer-content">
+            <!-- Header del Footer -->
+            <div class="footer-header">
+                <h2 class="footer-title">🚀 Equipo de Investigación</h2>
+                <p class="footer-subtitle">Ingeniería Informática</p>
+            </div>
+
+            <!-- Sección del Equipo -->
+            <div class="team-section">
+                <div class="team-photo-container">
+                    <div class="team-photo-wrapper">
+                        <!-- Foto Grupal -->
+                    <div class="group-photo-placeholder">
+                            <img src="{{ url_for('static', filename='img/grupo.jpg') }}" alt="Equipo de Investigación">
+                            🚀
+                     </div>
+                        <!-- Lista de Integrantes -->
+                        <div class="team-members-list">
+                            <div class="member-item">
+                                <span class="member-icon">👩‍💻</span>
+                                <span class="member-name">Jessica Vanesa Acosta Galindez</span>
+                            </div>
+                            <div class="member-item">
+                                <span class="member-icon">👨‍💻</span>
+                                <span class="member-name">Duban Alexander Gómez Hoyos</span>
+                            </div>
+                            <div class="member-item">
+                                <span class="member-icon">👨‍💻</span>
+                                <span class="member-name">Santiago Ordóñez Segura</span>
+                            </div>
+                            <div class="member-item">
+                                <span class="member-icon">👨‍💻</span>
+                                <span class="member-name">Andrés Felipe Suaza Cerón</span>
+                            </div>
+                            <div class="member-item">
+                                <span class="member-icon">👨‍💻</span>
+                                <span class="member-name">Santiago Prado Astaiza</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información del Proyecto -->
+            <div class="footer-info">
+                <div class="project-info">
+                    <h3 class="project-title">Análisis de Cohete a Presión de Agua</h3>
+                    <p class="project-description">
+                        Proyecto universitario enfocado en el análisis aerodinámico y de trayectoria de cohete propulsado por agua.
+                        Implementación de modelos predictivos, análisis de fases de vuelo y simulación de comportamiento.
+                    </p>
+                </div>
+
+                <div class="footer-bottom">
+                    <p>&copy; 2025 Análisis de Cohete - Proyecto de Investigación</p>
+                    <div class="university-badge">Ingeniería Informática</div>
+                </div>
+            </div>
+        </div>
     </footer>
 
     <script>
