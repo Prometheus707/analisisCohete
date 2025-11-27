@@ -532,9 +532,11 @@
     <!-- Menú de Navegación -->
     <nav class="navbar">
         <div class="nav-container">
-            <h1 class="nav-title">🚀</h1>
+            <a href="{{ url_for('main.index') }}">
+                <h1 class="nav-title">🚀</h1>
+            </a>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="{{ url_for('main.index') }}" class="nav-link">Inicio</a></li>
+                <!-- <li><a href="{{ url_for('main.index') }}" class="nav-link">Inicio</a></li> -->
                 <li><a href="{{ url_for('validacion_altitud.index') }}" class="nav-link">Validación</a></li>
                 <li><a href="{{ url_for('dashboard_ambiental.index') }}" class="nav-link">Dashboard</a></li>
                 <li><a href="{{ url_for('curva_barometrica.index') }}" class="nav-link">Curva Barométrica</a></li>

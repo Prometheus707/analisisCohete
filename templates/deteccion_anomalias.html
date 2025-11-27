@@ -9,12 +9,12 @@
         box-sizing: border-box;
     }
 
-        body {
+    body {
         background: linear-gradient(15deg, rgba(194, 194, 196, 0.315) 0%, rgba(104, 120, 146, 0.201) 50%, rgba(127, 176, 210, 0.356) 100%),
-                    url('/static/img/cohete.png') center/cover no-repeat fixed;
+            url('/static/img/cohete.png') center/cover no-repeat fixed;
         min-height: 100vh;
     }
-    
+
 
     .container {
         max-width: 1400px;
@@ -31,14 +31,17 @@
         font-size: 42px;
         font-weight: 700;
         margin-bottom: 10px;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        text-shadow: 0 0 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(96, 165, 250, 0.5);
+        color: white !important;
     }
+
 
     .header-section p {
         font-size: 16px;
         opacity: 0.95;
         max-width: 700px;
         margin: 0 auto;
+        color: white !important;
     }
 
     .stats-grid {
@@ -49,17 +52,17 @@
     }
 
     .stat-card {
-        background: white;
+        background: rgba(30, 41, 59, 0.85);
         border-radius: 15px;
         padding: 30px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         border-top: 5px solid #667eea;
     }
 
     .stat-card:hover {
         transform: translateY(-8px);
-        box-shadow: 0 12px 36px rgba(0,0,0,0.15);
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15);
     }
 
     .stat-card.pressure {
@@ -104,7 +107,7 @@
         background: white;
         border-radius: 18px;
         padding: 35px;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
         margin-bottom: 30px;
     }
 
@@ -192,7 +195,7 @@
         background: white;
         border-radius: 18px;
         padding: 35px;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
     }
 
     .diagnosis-title {
@@ -231,7 +234,7 @@
     }
 
     .diagnosis-side {
-        padding: 20px;
+        padding: 30px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -242,7 +245,7 @@
     .diagnosis-side.expected {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        border-right: 2px solid rgba(255,255,255,0.3);
+        border-right: 2px solid rgba(255, 255, 255, 0.3);
     }
 
     .diagnosis-side.actual {
@@ -330,17 +333,19 @@
             padding: 20px;
         }
     }
+
     .tal {
         font-size: 20px !important;
-       
+
         text-align: center;
     }
 </style>
 
 <div class="container">
     <div class="header-section">
-        <h1>🔍 Detección Global de Anomalías</h1>
-        <p class="tal">Análisis basado en el promedio de los 4 vuelos y comparación con las condiciones reales del día del lanzamiento</p>
+        <h1 class="blanco">🔍 Detección Global de Anomalías</h1>
+        <p class="tal">Análisis basado en el promedio de los 4 vuelos y comparación con las condiciones reales del día
+            del lanzamiento</p>
     </div>
 
     <!-- Tarjetas de Estadísticas Rápidas -->
@@ -372,7 +377,7 @@
     </div>
 
     <!-- Tarjeta de Promedios Calculados -->
-   
+
 
     <!-- Tarjeta de Diagnóstico Global -->
     <div class="diagnosis-section">
@@ -384,7 +389,8 @@
         {% if diagnostico %}
         <div class="diagnosis-list">
             {% for d in diagnostico %}
-            <div class="diagnosis-item {% if 'anomalía' in d.lower() or 'anómala' in d.lower() or 'error' in d.lower() or 'problema' in d.lower() %}anomaly{% else %}normal{% endif %}">
+            <div
+                class="diagnosis-item {% if 'anomalía' in d.lower() or 'anómala' in d.lower() or 'error' in d.lower() or 'problema' in d.lower() %}anomaly{% else %}normal{% endif %}">
                 <div class="diagnosis-comparison">
                     <div class="diagnosis-side expected">
                         <div class="diagnosis-label">Esperado / Análisis</div>
